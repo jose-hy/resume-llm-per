@@ -1,5 +1,5 @@
 import logging
-import azure.functions as func
+# import azure.functions as func
 import requests
 import os
 import ast
@@ -13,18 +13,96 @@ from pymilvus import connections, Collection, FieldSchema, CollectionSchema, Dat
 # Jun: save job postings info before cleaning to check how to clean the data
 from pathlib import Path
 from datetime import datetime
+from tqdm import tqdm as tqdm
 
 load_dotenv()
+    
+job_titles = [
+    "AI Machine Learning",
+    "Data Scientist",
+    # IT Support & Help Desk Jobs (General IT Roles)
+    "IT Support Specialist",
+    "Help Desk Technician",
+    "Technical Support Specialist",
+    "IT Helpdesk Analyst",
+    "IT Support Technician",
+    "Computer Support Technician",
+    "IT Service Desk Technician",
+    "IT Customer Support Specialist",
+    "IT Associate",
+    "IT Field Technician",
 
-app = func.FunctionApp()
+    # Network Administration & Infrastructure Jobs
+    "Network Technician",
+    "Network Support Specialist",
+    "Network Administrator (Entry-Level)",
+    "Junior Network Engineer",
+    "IT Infrastructure Technician",
+    "Systems Support Technician",
+    "IT Operations Specialist",
+    "IT Field Support Engineer",
+    "Junior VoIP Engineer",
+    "Telecommunications Technician",
 
-@app.timer_trigger(schedule="0 0 9 * * *", arg_name="myTimer", run_on_startup=False,
-              use_monitor=False) 
-def run_daily(myTimer: func.TimerRequest) -> None:
-    if myTimer.past_due:
-        logging.info('The timer is past due!')
+    # System Administration & IT Engineering Jobs
+    "Systems Administrator (Entry-Level)",
+    "Junior System Engineer",
+    "Junior Systems Analyst",
+    "IT Systems Technician",
+    "Cloud Support Associate",
+    "Cloud Systems Administrator",
+    "Cloud Support Engineer (Entry-Level)",
+    "Microsoft 365 Support Specialist",
+    "IT Operations Engineer",
+    "IT Systems Support Analyst",
 
-    logging.info('Starting job ingestion...')
+    # Cybersecurity & IT Security Jobs
+    "Security Analyst (Entry-Level)",
+    "IT Security Technician",
+    "Cybersecurity Support Specialist",
+    "SOC Analyst Level 1",
+    "IT Compliance Analyst",
+    "Risk and Compliance Analyst (IT)",
+    "Junior Security Operations Engineer",
+    "IT Security Administrator",
+    "Junior Information Security Analyst",
+    "Incident Response Technician",
+
+    # Remote IT & Technical Support Jobs
+    "Remote IT Support Technician",
+    "Technical Support Engineer",
+    "Remote Help Desk Technician",
+    "IT Consultant (Entry-Level)",
+    "Virtual IT Support Technician",
+    "Remote Desktop Support Specialist",
+    "IT Support Engineer (Remote)",
+    "Technical Customer Support Specialist",
+    "IT Troubleshooting Specialist",
+    "IT Support Coordinator",
+
+    # Specialized IT & Hardware Support Jobs
+    "IT Hardware Technician",
+    "Hardware Support Specialist",
+    "Device Support Technician",
+    "Printer Support Technician",
+    "PC Technician",
+    "POS (Point of Sale) Support Technician",
+    "Technical Deployment Specialist",
+    "IT Rollout Technician",
+    "IT Hardware Analyst",
+    "IT Asset Management Specialist"
+]
+
+
+# app = func.FunctionApp()
+
+#@app.timer_trigger(schedule="0 0 9 * * *", arg_name="myTimer", run_on_startup=False,
+#              use_monitor=False) 
+def run_daily():#myTimer: func.TimerRequest) -> None:
+    #if myTimer.past_due:
+    #    logging.info('The timer is past due!')
+
+    # logging.info('Starting job ingestion...')
 
     milvus_uri = os.getenv("ZILLZ_URI")
     milvus_token = os.getenv("ZILLZ_TOKEN")
@@ -32,31 +110,10 @@ def run_daily(myTimer: func.TimerRequest) -> None:
     jsearch_url = os.getenv("JSEARCH_URL")
     jsearch_api_key = os.getenv("JSEARCH_API_KEY")
 
-    querystring_ds = {
-        "query": "Data scientist",
+    querystring = {
         "page": "1",
-        "num_pages": "20",
-        "date_posted": "today",
-        "employment_types": "FULLTIME, CONTRACTOR, PARTTIME, INTERN",
-        "job_requirements": "under_3_years_experience, no_experience, no_degree",
-        "exclude_job_publishers": "Dice, jooble, Clearance Jobs, Geebo, Talent.com"
-    }
-
-    querystring_ml = {
-        "query": "Machine learning",
-        "page": "1",
-        "num_pages": "20",
-        "date_posted": "today",
-        "employment_types": "FULLTIME, CONTRACTOR, PARTTIME, INTERN",
-        "job_requirements": "under_3_years_experience, no_experience, no_degree",
-        "exclude_job_publishers": "Dice, jooble, Clearance Jobs, Geebo, Talent.com"
-    }
-
-    querystring_ai = {
-        "query": "AI",
-        "page": "1",
-        "num_pages": "20",
-        "date_posted": "today",
+        "num_pages": "10",
+        "date_posted": "week",
         "employment_types": "FULLTIME, CONTRACTOR, PARTTIME, INTERN",
         "job_requirements": "under_3_years_experience, no_experience, no_degree",
         "exclude_job_publishers": "Dice, jooble, Clearance Jobs, Geebo, Talent.com"
@@ -67,37 +124,32 @@ def run_daily(myTimer: func.TimerRequest) -> None:
         "X-RapidAPI-Host": "jsearch.p.rapidapi.com"
     }
 
-    response_ds = requests.get(jsearch_url, headers=headers, params=querystring_ds)
-    response_ml = requests.get(jsearch_url, headers=headers, params=querystring_ml)
-    response_ai = requests.get(jsearch_url, headers=headers, params=querystring_ai)
+    print("calling Jsearch API ...")
+    for job in tqdm(job_titles):
+        querystring['query'] = job
+        response = requests.get(jsearch_url, headers=headers, params=querystring)
+        job_postings_json = response.json()
+        file_path = str(job).replace(" ",'-')+".json"
+        with open(file_path, "w") as f:
+            json.dump(job_postings_json['data'], f)
 
-    job_postings_json_ds = response_ds.json()
-    job_postings_json_ml = response_ml.json()
-    job_postings_json_ai = response_ai.json()
+    print("concate API responses ...")
+    df_jobs = pd.DataFrame()
+    for job in job_titles:
+        file_path = str(job).replace(" ",'-')+".json"
+        df_each_job = pd.read_json(file_path, encoding = 'utf-8')
+        df_each_job['query_keywords'] = job
+        df_jobs = pd.concat([df_jobs, df_each_job], axis=0)
 
-    # This json file is created under the same path with vector_db
-    file_path = "data-ds.json"
-    with open(file_path, "w") as f:
-        json.dump(job_postings_json_ds['data'], f) # this generates the file data-ds.json
-    file_path = "data-ml.json"
-    with open(file_path, "w") as f:
-        json.dump(job_postings_json_ml['data'], f)
-    file_path = "data-ai.json"
-    with open(file_path, "w") as f:
-        json.dump(job_postings_json_ai['data'], f)
-
-    df_ds = pd.read_json('data-ds.json', encoding = 'utf-8')
-    df_ml = pd.read_json('data-ml.json', encoding = 'utf-8')
-    df_ai = pd.read_json('data-ai.json', encoding = 'utf-8')
-    df = pd.concat([df_ds, df_ml, df_ai], axis=0)
-
-    df_select = df[
-        ['job_id','job_title', 'employer_name', 'employer_logo', 'employer_website',
+    print(len(df_jobs), "jobs information are processed!")
+    
+    df_select = df_jobs[
+        ['query_keywords','job_id','job_title', 'employer_name', 'employer_logo', 'employer_website',
         'job_publisher', 'job_employment_type',
         'job_apply_link', 'job_description',
         'job_is_remote', 'job_city', 'job_state',
         'job_latitude', 'job_longitude', 'job_benefits',
-        'job_highlights']
+        'job_highlights', 'job_posted_at_datetime_utc']
     ].copy()
 
     # Jun: get the path of vector_db.py
@@ -193,12 +245,13 @@ def run_daily(myTimer: func.TimerRequest) -> None:
         FieldSchema(name="job_description_vector", dtype=DataType.FLOAT_VECTOR, dim=384),
         FieldSchema(name="job_description_raw", dtype=DataType.VARCHAR, max_length=50000),
         FieldSchema(name="info", dtype=DataType.VARCHAR, max_length=255),
-        FieldSchema(name="degree", dtype=DataType.VARCHAR, max_length=255), # new
+        FieldSchema(name="degree", dtype=DataType.VARCHAR, max_length=255,enable_analyzer=True,enable_match=True), # new
         FieldSchema(name="remote", dtype=DataType.BOOL, max_length=100), # new
-        FieldSchema(name="location_state", dtype=DataType.VARCHAR, max_length=255), # new
-        FieldSchema(name="employment_type", dtype=DataType.VARCHAR, max_length=255), # new
+        FieldSchema(name="location_state", dtype=DataType.VARCHAR, max_length=255,enable_analyzer=True,enable_match=True), # new
+        FieldSchema(name="employment_type", dtype=DataType.VARCHAR, max_length=255,enable_analyzer=True,enable_match=True), # new
         FieldSchema(name="citizenship", dtype=DataType.BOOL, max_length=100),
         FieldSchema(name="job_apply_link", dtype=DataType.VARCHAR, max_length=255),
+        FieldSchema(name="job_posted_at_datetime_utc", dtype=DataType.VARCHAR, max_length=80),
         FieldSchema(name="insert_time", dtype=DataType.VARCHAR, max_length=50)
     ]
     
@@ -222,7 +275,8 @@ def run_daily(myTimer: func.TimerRequest) -> None:
     emp_type_list = []
     citizenship_list = []
     link_list = []
-    timestamp_list = []  # NEW
+    job_post_at_timestamp_list = []
+    insert_timestamp_list = []  # NEW
 
     # Populate lists with DataFrame data
     for index, row in job_postings.iterrows():
@@ -233,14 +287,22 @@ def run_daily(myTimer: func.TimerRequest) -> None:
         vector_list.append(job_description_vector)
         description_list.append(row['job_description'])
         info_list.append(row['info'])
-        degree_list.append(row['degree_requirement'])
+        degree_requirement = ''
+        if row['degree_requirement'] == 'Degree required (Bachelor degree or above)':
+            degree_requirement = 'required'
+        elif row['degree_requirement'] == 'No degree required':
+            degree_requirement = 'no_degree'
+        else:
+            degree_requirement = None
+        degree_list.append(degree_requirement)
         remote_list.append(row['remote or not'])
         location_list.append(row['job_state'])
         emp_type_list.append(row['job_employment_type'])
         citizenship_list.append(row['citizenship'])
         link_list.append(row['job_apply_link'])
+        job_post_at_timestamp_list.append(row['job_posted_at_datetime_utc'])
         current_time = datetime.now().isoformat()
-        timestamp_list.append(current_time)
+        insert_timestamp_list.append(current_time)
     
     # Insert data into Milvus collection
     job_collection.upsert([
@@ -254,9 +316,13 @@ def run_daily(myTimer: func.TimerRequest) -> None:
         emp_type_list,
         citizenship_list,
         link_list,
-        timestamp_list
+        job_post_at_timestamp_list,
+        insert_timestamp_list
     ])
     
     print("DataFrame indexed into Milvus successfully.")
 
     logging.info('Python timer trigger function executed.')
+
+
+run_daily()

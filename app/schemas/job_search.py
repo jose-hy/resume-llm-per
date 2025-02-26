@@ -1,9 +1,7 @@
-from typing import List, Optional
-from fastapi import FastAPI, UploadFile, File, Form, Depends, Query
-from pydantic import BaseModel, Field, validator
+from typing import List, Optional, Union
+from pydantic import BaseModel
+from fastapi import Form, Query
 from enum import Enum
-
-# Define enums for the selectable options
 
 class DegreeEnum(str, Enum):
     no_degree_required = "no_degree"
@@ -69,15 +67,14 @@ class LocationEnum(str, Enum):
     district_of_columbia = "District of Columbia"
     all = "All"
 
-
 class JobSearchVars(BaseModel):
-    limit: int = ...
-    offset: int = ...
+    limit: int
+    offset: int
     exclude_citizen_only: Optional[bool] = None
-    degree: Optional[List[DegreeEnum]] = Query(None)
+    degree: Optional[List[DegreeEnum]] = None
     remote: Optional[bool] = None
-    location_state: Optional[List[LocationEnum]] = Query(None)
-    employment_type: Optional[List[EmploymentTypeEnum]] = Query(None)
+    location_state: Optional[List[LocationEnum]] = None
+    employment_type: Optional[List[EmploymentTypeEnum]] = None
     rerank: Optional[bool] = None
 
     @classmethod
@@ -102,3 +99,27 @@ class JobSearchVars(BaseModel):
             employment_type=employment_type,
             rerank=rerank
         )
+
+class JobSearchResponse(BaseModel):
+    job_id: str
+    job_info: str
+    description: str
+    score: float
+    degree: Optional[str] = None
+    remote: Optional[bool] = None
+    location_state: Optional[str] = None
+    employment_type: Optional[str] = None
+    citizen: Optional[bool] = None
+    link: Optional[str] = None
+    job_post_date: Optional[str] = None
+
+class ErrorResponse(BaseModel):
+    message: str
+    status: str = "error"
+
+class AnalysisResponse(BaseModel):
+    analysis: str
+    status: str = "success"
+
+JobSearchResults = Union[List[JobSearchResponse], ErrorResponse]
+AnalysisResults = Union[AnalysisResponse, ErrorResponse] 

@@ -1,0 +1,141 @@
+## Setting up the database
+
+This project users PostgreSQL, hosted on EC2.
+
+To set up the database:
+
+- Create AWS EC2 instance with Ubuntu and t4g.nano
+
+- Update your system packages:
+
+`sudo apt update
+sudo apt upgrade -y`
+
+- Install PostgreSQL and its contrib package:
+
+`sudo apt install postgresql postgresql-contrib -y`
+
+- Start & Enable PostgreSQL Service:
+
+`sudo systemctl start postgresql 
+sudo systemctl enable postgresql 
+sudo systemctl status postgresql`
+
+- Change the postgres user password:
+
+`sudo -u postgres psql 
+\password postgres`
+
+- To allow remote connections, modify PostgreSQL configuration:
+
+`sudo nano /etc/postgresql/*/main/postgresql.conf`
+
+Change:
+
+`#listen_addresses = 'localhost'`
+
+to:
+
+`listen_addresses = '*'`
+
+- Save changes
+
+`sudo nano /etc/postgresql/*/main/pg_hba.conf`
+
+- Add:
+
+`host    all             all             0.0.0.0/0               md5`
+
+- Restart postgres:
+
+`sudo systemctl restart postgresql`
+
+Update your EC2 security group to allow traffic on port 5432
+
+## Setting up the server
+
+The server handles analytics and authentication. It's built with Java Spring Boot and is hosted on EC2.
+
+To set up, create an EC2 instance with Amazon Linux and t4g.micro
+
+- Connect EC2 to GitHub using SSH by generating an SSH key pair on your EC2 instance:
+
+`ssh-keygen -t ed25519 -C "your_email@example.com"`
+
+- Start the SSH agent in the background:
+
+`eval "$(ssh-agent -s)"`
+
+- Add your private key to the SSH agent:
+
+`ssh-add ~/.ssh/id_ed25519`
+
+- View and copy your public key:
+
+`cat ~/.ssh/id_ed25519.pub`
+
+Add this key to your GitHub account:
+
+- Go to GitHub.com → Settings → SSH and GPG keys
+- Click "New SSH key"
+- Give it a descriptive title (e.g., "EC2 Instance")
+- Paste your public key
+- Click "Add SSH key"
+
+- Install Git using:
+
+`sudo apt install git -y`
+
+- Clone repo
+
+- Install docker:
+
+`sudo yum install docker -y`
+
+`sudo service docker start`
+
+`sudo systemctl enable docker`
+
+- Build Docker Image:
+
+`sudo docker build -t resume-matching .`
+
+- Start server:
+
+`sudo docker run -d -p 8080:8080 -e SECRET_KEY=<SECRET_KEY> -e DB_URL=jdbc:postgresql://<IP_ADDRESS_OR_URL>/<db_name> -e DB_USERNAME=postgres -e DB_PASSWORD=<> -e SPRING_PROFILES_ACTIVE=prod resume-matching`
+
+## Setting up analytics dashboard
+
+The dashboard is built with Grafana. It uses the following SQL queries:
+
+### Number of jobs clicked on vs number of jobs fetched:
+
+`select
+  (data ->> 'viewed') :: int as viewed,
+  (data ->> 'clicked_on') :: int as clicked_on,
+  ROW_NUMBER() over () :: text
+from
+  analytics
+where
+  type = 'jobs_viewed';`
+
+### At least one job selected:
+
+`select
+  count(case when (data ->> 'value') = 'true' then 1 end) as selectedAtLeastOne,
+  count(case when (data ->> 'value') = 'false' then 1 end) as selectedNone
+from
+  analytics
+where
+  type = 'at_least_one_job_selected';`
+
+### Daily active users:
+
+`select
+  date_trunc('day', "timestamp") as day,
+  SUM((data ->> 'count') :: int) as count
+from
+  analytics
+GROUP BY
+  date_trunc('day', "timestamp")
+order by date_trunc('day', "timestamp") asc;`

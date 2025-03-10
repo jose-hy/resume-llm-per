@@ -1,4 +1,4 @@
-Getting started:
+## Getting started:
 
 Install with `npm` and run with `npm run dev`
 

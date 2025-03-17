@@ -19,13 +19,13 @@
 </script>
 
 <div
-  class="bg-white [border:1px_solid_#DADADA] rounded-8px w-[400px] sticky top-24px px-24px py-32px"
+  class="bg-white max-[600px]:mb-4 [border:1px_solid_#DADADA] max-[600px]:w-full max-[600px]:max-w-full w-[50vw] rounded-8px max-w-[400px] max-[600px]:relative sticky top-24px px-24px py-32px"
 >
   <p>This app matches your resume with job openings in the IT field.</p>
   <Spacer axis="y" size="24" />
   <p class="font-600">Upload resume</p>
   <input
-    class="[border:1px_solid_black] rounded-4px px-12px py-4px"
+    class="mt-1 [border:1px_solid_#DADADA] rounded-md px-12px py-2 w-full"
     type="file"
     onchange={(e) =>
       store.setFile((e.target as HTMLInputElement).files?.[0] ?? "")}

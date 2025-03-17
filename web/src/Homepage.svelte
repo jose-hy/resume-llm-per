@@ -70,7 +70,7 @@
 </script>
 
 <div class="flex justify-center pt-48px px-16px">
-  <div class="flex gap-24px items-start">
+  <div class="flex gap-24px items-start max-[600px]:flex-col">
     <!-- <button onclick={logout}>logout</button> -->
     <JobForm />
     <div class="flex flex-col">
@@ -83,7 +83,7 @@
           <Spacer axis="y" size="16" />
         {/each}
       {:else if store.jobListings}
-        <p>No results</p>
+        <p class="max-w-[650px] w-[45vw] text-center">No results found</p>
       {:else}
         {#each data.defaultJobListings as jobListing}
           <JobPreview

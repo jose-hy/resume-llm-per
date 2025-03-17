@@ -30,11 +30,11 @@
 
 <div>
   <div class="relative mt-1">
-    <span class="inline-block w-full rounded-md shadow-sm">
+    <span class="inline-block w-full rounded-md">
       <button
         use:combobox.button
         onchange={onChange}
-        class="focus:shadow-outline-teal relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-2 pr-10 text-left text-sm transition duration-150 ease-in-out focus:border-teal-300 focus:outline-none sm:leading-5"
+        class="focus:shadow-outline-teal relative w-full cursor-default rounded-md [border:1px_solid_#DADADA] bg-white py-2 pl-2 pr-10 text-left text-sm transition duration-150 ease-in-out focus:border-teal-300 focus:outline-none sm:leading-5"
       >
         <div class="flex flex-wrap gap-2">
           {#each $combobox.selected as selected (selected)}

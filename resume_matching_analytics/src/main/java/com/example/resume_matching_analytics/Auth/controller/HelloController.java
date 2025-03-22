@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 @RestController
 public class HelloController {
-    @CrossOrigin(origins = "*", allowCredentials = "true")
+    @CrossOrigin(origins = "*")
     @GetMapping("")
     public String greeting(HttpServletRequest req) {
         return "Working" + req.getSession().getId();

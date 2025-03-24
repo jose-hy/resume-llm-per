@@ -71,7 +71,7 @@
 
 <div class="flex justify-center pt-48px px-16px">
   <div class="flex gap-24px items-start max-[600px]:flex-col">
-    <!-- <button onclick={logout}>logout</button> -->
+    <button onclick={logout}>logout</button>
     <JobForm />
     <div class="flex flex-col">
       {#if store.jobListings && store.jobListings.length > 0}

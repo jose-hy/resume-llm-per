@@ -9,6 +9,8 @@ export const load: PageServerLoad = async ({ request }) => {
     },
   });
 
+  console.log(await res.text());
+
   let defaultJobListings: JobListing[] = [];
 
   if (res.status === 200) {

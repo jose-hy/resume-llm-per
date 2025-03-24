@@ -1,7 +1,7 @@
-let isDevelopment = true;
+let isDevelopment = false;
 export const url = isDevelopment
   ? "http://localhost:8080"
-  : "http://3.91.60.31:8080";
+  : "https://server.interviewmoves.org";
 
 const request = (type: "POST" | "PUT" | "GET") => {
   return (

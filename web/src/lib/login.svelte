@@ -45,7 +45,7 @@
   <form
     class="bg-white px-20px py-24px rounded-[10px] [border:1px_solid_#DADADA] w-[90vw] max-w-[400px] flex flex-col items-center"
   >
-    <button onclick={test}>test</button>
+    <!-- <button onclick={test}>test</button> -->
     <h1 class="text-center font-700 text-24px">Interview Moves</h1>
     <Spacer axis="y" size={24} />
     <div class="flex flex-col gap-4px w-full">

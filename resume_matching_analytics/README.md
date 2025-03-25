@@ -194,6 +194,18 @@ sudo docker build -t resume-matching .
 sudo docker run -d -p 8080:8080 -e SECRET_KEY=<SECRET_KEY> -e DB_URL=jdbc:postgresql://<IP_ADDRESS_OR_URL>/<db_name> -e DB_USERNAME=postgres -e DB_PASSWORD=<> -e SPRING_PROFILES_ACTIVE=prod resume-matching
 ```
 
+### SSL and certificate renewal
+
+The server uses nginx for port forwarding from port 443 to port 8080.
+
+For the SSL cert, Let's Encrypt is used. This cert only lasts 90 days but is renewed every 12 hours using a cron job
+
+This cron job (using crontab) runs twice a day and stops the nginx port forwarding:
+
+```
+0 0,12 * * * sudo systemctl stop nginx && sudo certbot renew && sudo systemctl stop httpd && sudo systemctl start nginx 
+```
+
 ## Setting up analytics dashboard
 
 The dashboard is built with Grafana. It uses the following SQL queries:

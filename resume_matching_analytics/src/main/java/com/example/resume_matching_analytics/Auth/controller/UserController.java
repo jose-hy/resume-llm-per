@@ -27,10 +27,11 @@ public class UserController {
 
         ResponseCookie cookie = ResponseCookie.from("accessCode", token)
                 .maxAge(60 * 60 * 1000)
-                .sameSite("Lax")
+                .sameSite("Strict")
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
+                .domain(".interviewmoves.org")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
@@ -40,10 +41,11 @@ public class UserController {
         String token = service.verify(user);
         ResponseCookie cookie = ResponseCookie.from("accessCode", token)
                 .maxAge(60 * 60 * 1000)
-                .sameSite("Lax")
+                .sameSite("Strict")
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
+                .domain(".interviewmoves.org")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
@@ -53,9 +55,10 @@ public class UserController {
         ResponseCookie cookie = ResponseCookie.from("accessCode", "")
                 .maxAge(0)
                 .httpOnly(true)
-                .sameSite("Lax")
-                .secure(false)
+                .sameSite("Strict")
+                .secure(true)
                 .path("/")
+                .domain(".interviewmoves.org")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }

@@ -69,6 +69,9 @@
   };
 </script>
 
+<svelte:head>
+  <title>Interview Moves</title>
+</svelte:head>
 <div class="flex justify-center pt-48px px-16px">
   <div class="flex gap-24px items-start max-[600px]:flex-col">
     <button onclick={logout}>logout</button>

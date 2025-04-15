@@ -42,7 +42,7 @@ To ingest job postings into Milvus/Zilliz:
 python data_ingestion/data_ingestion.py
 ```
 
-### AWS DynamoDB Integration
+### AWS DynamoDB Integration (on hold)
 
 To ingest job postings into AWS DynamoDB:
 

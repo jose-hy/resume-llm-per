@@ -77,7 +77,8 @@ async def search_jobs(
                 employment_type=meta[i]['employment_type'],
                 citizen=meta[i]['citizen'],
                 link=meta[i]['link'],
-                job_post_date=meta[i]['job_post_date']
+                job_post_date=meta[i]['job_post_date'],
+                job_posted_at=meta[i]['job_posted_at']
             )
         )
     

@@ -115,7 +115,8 @@ def get_relevant_ids(
                 "employment_type": hit.entity.get('employment_type'),
                 "citizen": hit.entity.get('citizenship'),
                 "link": hit.entity.get('job_apply_link'),
-                "job_post_date": hit.entity.get('job_posted_at_datetime_utc'),
+                "job_post_date": hit.entity.get('job_posted_at_datetime'),
+                "job_posted_at": hit.entity.get('job_posted_at')
             }
             metadatas.append(metadata)
 

@@ -39,13 +39,8 @@ def get_gemini_response(input: Optional[str], pdf_content: str, prompt: str, ver
     Get response from Gemini AI model
     """
     try:
-        # Debug: List available models
-        print("Available models:")
-        for model in genai.list_models():
-            print(f"- {model.name}")
-            
         # Create model instance
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel(settings.GEMINI_MODEL)
         # model=genai.GenerativeModel('gemini-1.5-pro')
         # print([print(model) for model in genai.list_models()])
         # Prepare content parts

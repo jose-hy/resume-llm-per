@@ -1,5 +1,5 @@
-from fastapi import APIRouter, UploadFile, File, Depends, Form
-from typing import List
+from fastapi import APIRouter, UploadFile, File, Depends, Form, Query
+from typing import List, Optional
 import PyPDF2 as pdf
 
 from ...schemas.job_search import (
@@ -7,7 +7,7 @@ from ...schemas.job_search import (
     AnalysisResponse, AnalysisResults
 )
 from ...services.ai_service import get_gemini_response, PROMPTS
-from ...services.search_service import get_relevant_ids, rerank_results, collection
+from ...services.search_service import get_relevant_ids, rerank_results, collection, get_latest_jobs
 from ...services.resume_service import resume_parser
 
 router = APIRouter()
@@ -66,7 +66,9 @@ async def search_jobs(
         response.append(
             JobSearchResponse(
                 job_id=ids[i],
-                job_info=meta[i]['info'],
+                job_title=meta[i]['job_title'],
+                job_location=meta[i]['job_location'],
+                company=meta[i]['company'],
                 description=docs[i],
                 score=result.relevance_score,
                 degree=meta[i]['degree'],
@@ -156,6 +158,20 @@ async def cover_letter_generation(
         return AnalysisResponse(analysis=cover_letter)
     except Exception as e:
         return ErrorResponse(message=f"Error generating cover letter: {str(e)}")
+
+@router.get("/latest_jobs", response_model=List[JobSearchResponse])
+async def get_latest_job_listings(
+    limit: Optional[int] = Query(10, description="Number of jobs to return", ge=1, le=50)
+):
+    """
+    Get the latest job listings without any filtering.
+    This endpoint is designed for the default page view.
+    """
+    try:
+        jobs = get_latest_jobs(collection=collection, limit=limit)
+        return [JobSearchResponse(**job) for job in jobs]
+    except Exception as e:
+        return ErrorResponse(message=f"Error fetching latest jobs: {str(e)}")
 
 @router.get("/")
 async def root():

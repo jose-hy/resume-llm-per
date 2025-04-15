@@ -1,5 +1,5 @@
 from typing import List, Optional, Union
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from fastapi import Form, Query
 from enum import Enum
 
@@ -68,26 +68,26 @@ class LocationEnum(str, Enum):
     all = "All"
 
 class JobSearchVars(BaseModel):
-    limit: int
-    offset: int
-    exclude_citizen_only: Optional[bool] = None
-    degree: Optional[List[DegreeEnum]] = None
-    remote: Optional[bool] = None
-    location_state: Optional[List[LocationEnum]] = None
-    employment_type: Optional[List[EmploymentTypeEnum]] = None
-    rerank: Optional[bool] = None
+    limit: int = Field(..., description="Number of results to return")
+    offset: int = Field(..., description="Number of results to skip")
+    exclude_citizen_only: Optional[bool] = Field(None, description="Exclude jobs that require citizenship")
+    degree: Optional[List[DegreeEnum]] = Field(None, description="Filter by degree requirement")
+    remote: Optional[bool] = Field(None, description="Filter by remote work option")
+    location_state: Optional[List[LocationEnum]] = Field(None, description="Filter by state location")
+    employment_type: Optional[List[EmploymentTypeEnum]] = Field(None, description="Filter by employment type")
+    rerank: Optional[bool] = Field(None, description="Whether to rerank results")
 
     @classmethod
     def as_form(
         cls,
-        limit: int = Form(...),
-        offset: int = Form(...),
-        exclude_citizen_only: Optional[bool] = Form(None),
-        degree: Optional[List[DegreeEnum]] = Query(None),
-        remote: Optional[bool] = Form(None),
-        location_state: Optional[List[LocationEnum]] = Query(None),
-        employment_type: Optional[List[EmploymentTypeEnum]] = Query(None),
-        rerank: Optional[bool] = Form(None)
+        limit: int = Form(..., description="Number of results to return"),
+        offset: int = Form(..., description="Number of results to skip"),
+        exclude_citizen_only: Optional[bool] = Form(None, description="Exclude jobs that require citizenship"),
+        degree: Optional[List[DegreeEnum]] = Query(None, description="Filter by degree requirement"),
+        remote: Optional[bool] = Form(None, description="Filter by remote work option"),
+        location_state: Optional[List[LocationEnum]] = Query(None, description="Filter by state location"),
+        employment_type: Optional[List[EmploymentTypeEnum]] = Query(None, description="Filter by employment type"),
+        rerank: Optional[bool] = Form(None, description="Whether to rerank results")
     ):
         return cls(
             limit=limit,
@@ -102,7 +102,9 @@ class JobSearchVars(BaseModel):
 
 class JobSearchResponse(BaseModel):
     job_id: str
-    job_info: str
+    job_title: str
+    job_location: str
+    company: str
     description: str
     score: float
     degree: Optional[str] = None
@@ -112,6 +114,7 @@ class JobSearchResponse(BaseModel):
     citizen: Optional[bool] = None
     link: Optional[str] = None
     job_post_date: Optional[str] = None
+    job_posted_at: Optional[int] = None
 
 class ErrorResponse(BaseModel):
     message: str

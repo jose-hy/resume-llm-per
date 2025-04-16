@@ -1,0 +1,46 @@
+{
+    "family": "jobmatchapi",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::593510232307:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "name": "jobmatchapi",
+            "image": "593510232307.dkr.ecr.us-east-2.amazonaws.com/jobmatchapi:latest",
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "environment": [
+                {
+                    "name": "GEMINI_API_KEY",
+                    "value": "AIzaSyAyC8soX8taWCG0guJw41TwP6KrdrN5eHo"
+                },
+                {
+                    "name": "COHERE_API_KEY",
+                    "value": "MqTKagmDqcpc5Qt7FKwJT0xuixg7nbI4B0ayGQdW"
+                },
+                {
+                    "name": "ZILLZ_URI",
+                    "value": "https://in03-3acf9d8039d538c.serverless.gcp-us-west1.cloud.zilliz.com"
+                },
+                {
+                    "name": "ZILLZ_TOKEN",
+                    "value": "db_3acf9d8039d538c:Zm5!]rx[tO}sBZFz"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/jobmatchapi",
+                    "awslogs-region": "us-east-2",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ]
+}

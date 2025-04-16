@@ -94,6 +94,8 @@ The API will be available at `http://localhost:80`
 
 ### AWS Deployment
 
+#### 1. Build Container with AWS ECR
+
 1. Install and configure AWS CLI:
 ```bash
 # Install AWS CLI
@@ -123,15 +125,74 @@ docker tag jobmatchapi:latest <your-account-id>.dkr.ecr.<your-region>.amazonaws.
 
 5. Push the image to ECR:
 ```bash
-docker push <your-account-id>.dkr.ecr.us-east-2.amazonaws.com/jobmatchapi:latest
+docker push <your-account-id>.dkr.ecr.<your-region>.amazonaws.com/jobmatchapi:latest
 ```
 
-Note: Replace the following placeholders:
-- `<your-region>`: Your AWS region (e.g., us-east-1)
-- `<your-account-id>`: Your AWS account ID
+#### 2. Deploy on AWS ECS
 
-You can find your AWS account ID by running:
+1. Create a task definition file (`task-definition.json`):
+```json
+{
+    "family": "jobmatchapi",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::your-account-id:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "name": "jobmatchapi",
+            "image": "your-account-id.dkr.ecr.your-region.amazonaws.com/jobmatchapi:latest",
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "environment": [
+                {
+                    "name": "GEMINI_API_KEY",
+                    "value": "your_gemini_api_key"
+                },
+                {
+                    "name": "COHERE_API_KEY",
+                    "value": "your_cohere_api_key"
+                },
+                {
+                    "name": "ZILLZ_URI",
+                    "value": "your_zilliz_uri"
+                },
+                {
+                    "name": "ZILLZ_TOKEN",
+                    "value": "your_zilliz_token"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/jobmatchapi",
+                    "awslogs-region": "your-region",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ]
+}
+```
+
+2. Create an ECS cluster and deploy the task:
 ```bash
-aws sts get-caller-identity --query Account --output text
+# Create ECS cluster
+aws ecs create-cluster --cluster-name jobmatchapi-cluster --region your-region
+
+# Register task definition
+aws ecs register-task-definition --cli-input-json file://task-definition.json --region your-region
 ```
+
+Then create a service with the task definiation and wait for few minutes for deployment.
+
+The API will be available at the task's public IP address on port 80. IP can be found at: ECS --> Clusters --> jobmatchapi-cluster --> Tasks --> Networking --> Public IP.
+
+
+#### 3. customize url with our own domain
 

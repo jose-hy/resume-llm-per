@@ -24,6 +24,7 @@ public class UserController {
     @PostMapping("/register")
     public void register(@RequestBody User user, HttpServletResponse response) {
         String token = service.register(user);
+        String env = System.getProperty("env");
 
         ResponseCookie cookie = ResponseCookie.from("accessCode", token)
                 .maxAge(60 * 60 * 1000)
@@ -39,13 +40,15 @@ public class UserController {
     @PostMapping("/login")
     public void login(@RequestBody User user, HttpServletResponse response, HttpServletRequest req) {
         String token = service.verify(user);
+        String env = System.getProperty("env");
         ResponseCookie cookie = ResponseCookie.from("accessCode", token)
                 .maxAge(60 * 60 * 1000)
-                .sameSite("Strict")
+                .sameSite(env === "development" ? "Lax" : "Strict")
                 .httpOnly(true)
-                .secure(true)
+                .secure(env !== "development")
+//                .secure(true)
                 .path("/")
-                .domain(".interviewmoves.org")
+                .domain(env === "development" ? "localhost" : ".interviewmoves.org")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }

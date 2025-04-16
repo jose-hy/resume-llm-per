@@ -63,7 +63,7 @@ Once the server is running, you can access:
 
 ## Deployment Instructions
 
-### Building and Pushing Docker Image
+### Local Docker Deployment
 
 1. Build the Docker image:
 ```bash
@@ -77,9 +77,55 @@ docker push <repo_name>/jobmatchapi:latest
 
 Note: Replace `<repo_name>` with your Docker Hub repository name.
 
-### Running the Container
+### Running the Container Locally
 
 To run the container:
 ```bash
 docker run -p 80:80 <repo_name>/jobmatchapi:latest
 ```
+
+The API will be available at `http://localhost:80`
+
+### AWS Deployment
+
+1. Install and configure AWS CLI:
+```bash
+# Install AWS CLI
+brew install awscli  # For macOS
+# or
+pip install awscli   # Using pip
+
+# Configure AWS credentials
+aws configure
+```
+
+2. Create an ECR repository (if not exists):
+```bash
+aws ecr create-repository --repository-name jobmatchapi
+```
+
+3. Authenticate Docker to ECR:
+```bash
+aws ecr get-login-password --region <your-region> | docker login --username AWS --password-stdin <your-account-id>.dkr.ecr.<your-region>.amazonaws.com
+```
+
+4. Build and tag the image for ECR:
+```bash
+docker build -t jobmatchapi .
+docker tag jobmatchapi:latest <your-account-id>.dkr.ecr.<your-region>.amazonaws.com/jobmatchapi:latest
+```
+
+5. Push the image to ECR:
+```bash
+docker push <your-account-id>.dkr.ecr.us-east-2.amazonaws.com/jobmatchapi:latest
+```
+
+Note: Replace the following placeholders:
+- `<your-region>`: Your AWS region (e.g., us-east-1)
+- `<your-account-id>`: Your AWS account ID
+
+You can find your AWS account ID by running:
+```bash
+aws sts get-caller-identity --query Account --output text
+```
+

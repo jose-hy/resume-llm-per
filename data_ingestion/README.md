@@ -7,6 +7,7 @@ This directory contains scripts for ingesting job posting data from the JSearch 
 - `data_ingestion.py`: Ingests job postings into Milvus/Zilliz vector database
 - `job_titles.json`: Job titles for searching jobs and indexing to Vector DB
 
+🤖 modify the job_titles when needed before running the ingestion script.
 
 ## Data Table Structure
 
@@ -60,7 +61,7 @@ To ingest job postings into Milvus/Zilliz:
 python data_ingestion/data_ingestion.py
 ```
 
-## AWS Lambda Deployment (Run the Ingestion Pipeline Weekly)
+## AWS Lambda Deployment (Run the Time-triggered Ingestion Pipeline Weekly)
 
 The scripts can be deployed as AWS Lambda functions. The `lambda_handler` function in each script is designed to be triggered by AWS Lambda.
 
@@ -71,7 +72,7 @@ Since the data ingestion pipeline comsumes larger computer resources than normal
 ./data_ingestion/build.sh
 ```
 
-Check the scrip in more details. It first build the image then push the image to AWS ECR.
+Check the scrip in more details. It first build the image then push the image to AWS ECR. You might be prompt to login AWS.
 
 ### Lambda Configuration
 

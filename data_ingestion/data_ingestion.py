@@ -32,6 +32,16 @@ milvus_index_name = "job_listings1"
 data_dir = Path("/tmp/data_ingest_tmp")  # Use /tmp for Lambda
 data_dir.mkdir(exist_ok=True)
 
+# Load job titles from JSON file
+try:
+    with open('data_ingestion/job_titles.json', 'r') as f:
+        job_titles_data = json.load(f)
+        job_titles = job_titles_data['job_titles']
+    logger.info(f"Successfully loaded {len(job_titles)} job titles from JSON file")
+except Exception as e:
+    logger.error(f"Error loading job titles from JSON file: {str(e)}")
+    raise
+
 # Initialize the embedding model with optimized settings
 try:
     logger.info("Initializing embedding model...")

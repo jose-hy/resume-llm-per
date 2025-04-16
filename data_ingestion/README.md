@@ -7,7 +7,7 @@ This directory contains scripts for ingesting job posting data from the JSearch 
 - `data_ingestion.py`: Ingests job postings into Milvus/Zilliz vector database
 - `job_titles.json`: Job titles for searching jobs and indexing to Vector DB
 
-🤖 modify the job_titles when needed before running the ingestion script.
+🤖 modify the **job_titles** json when needed before running the ingestion script.
 
 ## Data Table Structure
 

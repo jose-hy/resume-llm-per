@@ -1,11 +1,10 @@
-# resume-matching-llm
-# Mainly read 3 python files (1.vector_db_1204; 2.parse_resume; 3.app_v2_1204)
+# Resume Matching LLM (Backend)
 
-Frontend: https://github.com/de-data-lab/resume-matching-frontend
+There are three parts of the backend, API, Vector DB, and Data Ingestion Pipeline.
+See VectorDB and Ingestion Pipeline at [HERE](https://github.com/de-data-lab/resume-matching-llm/tree/1-jsearch-dataingestion/data_ingestion#job-posting-data-ingestion) 
 
-Analytics server: https://github.com/de-data-lab/resume-matching-server
+## Backend API
 
-# Resume Matching LLM
 
 ## Deployment Instructions
 

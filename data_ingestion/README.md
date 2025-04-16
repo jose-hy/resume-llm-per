@@ -1,11 +1,34 @@
 # Job Posting Data Ingestion
 
-This directory contains scripts for ingesting job posting data from the JSearch API into Milvus Vector DB hosted on (Zilliz)[https://cloud.zilliz.com/orgs/org-zocumtftvqemtejqpopiek/projects/proj-1a3103822ea4307031154a/clusters/in03-3acf9d8039d538c/collections/job_listings1].
+This directory contains scripts for ingesting job posting data from the JSearch API into Milvus Vector DB hosted on [Zilliz](https://cloud.zilliz.com/orgs/org-zocumtftvqemtejqpopiek/projects/proj-1a3103822ea4307031154a/clusters/in03-3acf9d8039d538c/collections/job_listings1).
 
 ## Scripts
 
 - `data_ingestion.py`: Ingests job postings into Milvus/Zilliz vector database
 - `job_titles.json`: Job titles for searching jobs and indexing to Vector DB
+
+
+## Data Table Structure
+
+The table `job_listings` has the following structure:
+
+- **Primary Key**: `job_id` (String)
+- **Attributes**:
+  - `job_description_vector`: List of numbers (embedding vector)
+  - `job_description_raw`: String (raw job description)
+  - `job_title`: String
+  - `employer_name`: String
+  - `job_location`: String
+  - `degree`: String (required, no_degree, unknown)
+  - `remote`: Boolean
+  - `location_state`: String
+  - `employment_type`: String
+  - `citizenship`: Boolean
+  - `job_apply_link`: String
+  - `job_posted_at`: Number (timestamp in milliseconds)
+  - `job_posted_at_datetime`: String (ISO format)
+  - `insert_time`: String (ISO format)
+
 
 ## Environment Setup (if running locally)
 
@@ -37,31 +60,9 @@ To ingest job postings into Milvus/Zilliz:
 python data_ingestion/data_ingestion.py
 ```
 
+## AWS Lambda Deployment (Run the Ingestion Pipeline Weekly)
 
-## Data Table Structure
-
-The table `job_listings` has the following structure:
-
-- **Primary Key**: `job_id` (String)
-- **Attributes**:
-  - `job_description_vector`: List of numbers (embedding vector)
-  - `job_description_raw`: String (raw job description)
-  - `job_title`: String
-  - `employer_name`: String
-  - `job_location`: String
-  - `degree`: String (required, no_degree, unknown)
-  - `remote`: Boolean
-  - `location_state`: String
-  - `employment_type`: String
-  - `citizenship`: Boolean
-  - `job_apply_link`: String
-  - `job_posted_at`: Number (timestamp in milliseconds)
-  - `job_posted_at_datetime`: String (ISO format)
-  - `insert_time`: String (ISO format)
-
-## AWS Lambda Deployment
-
-Both scripts can be deployed as AWS Lambda functions. The `lambda_handler` function in each script is designed to be triggered by AWS Lambda.
+The scripts can be deployed as AWS Lambda functions. The `lambda_handler` function in each script is designed to be triggered by AWS Lambda.
 
 ### Lambda Configuration
 
@@ -73,11 +74,6 @@ Both scripts can be deployed as AWS Lambda functions. The `lambda_handler` funct
    - `ZILLZ_TOKEN`
    - `ZILLZ_URI`
 
-### Lambda vs. Local Execution
-
-The script automatically detects whether it's running in Lambda or locally:
-- In Lambda: Uses IAM role for authentication
-- Locally: Uses AWS credentials from .env file
 
 ## Notes
 

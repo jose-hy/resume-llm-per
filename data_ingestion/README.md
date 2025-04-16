@@ -64,6 +64,13 @@ python data_ingestion/data_ingestion.py
 
 The scripts can be deployed as AWS Lambda functions. The `lambda_handler` function in each script is designed to be triggered by AWS Lambda.
 
+### Image building
+Since the data ingestion pipeline comsumes larger computer resources than normal lambda function limits, we containerize the pipeline to run on Lambda.
+
+```bash
+.data_ingestion/build.sh
+```
+
 ### Lambda Configuration
 
 1. **Memory**: Set to at least 1024 MB (1 GB) for optimal performance

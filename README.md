@@ -8,6 +8,12 @@ See VectorDB and Ingestion Pipeline at [HERE](https://github.com/de-data-lab/res
 
 The backend API is built with FastAPI and provides endpoints for resume matching, job search, and resume analysis. The API is available at `/api/v1/`.
 
+### Quick Start
+```bash
+pip install -r requirements.txt
+fastapi dev app/main.py
+```
+
 ### API Documentation
 
 Once the server is running, you can access:

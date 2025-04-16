@@ -4,6 +4,11 @@ There are three parts of the backend, API, Vector DB, and Data Ingestion Pipelin
 
 See VectorDB and Ingestion Pipeline at [HERE](https://github.com/de-data-lab/resume-matching-llm/tree/1-jsearch-dataingestion/data_ingestion#job-posting-data-ingestion) 
 
+## System Architecture
+
+![System Architecture](workflow.png)
+
+
 ## Backend API
 
 The backend API is built with FastAPI and provides endpoints for resume matching, job search, and resume analysis. The API is available at `/api/v1/`.

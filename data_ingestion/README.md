@@ -1,13 +1,13 @@
 # Job Posting Data Ingestion
 
-This directory contains scripts for ingesting job posting data from the JSearch API into different databases.
+This directory contains scripts for ingesting job posting data from the JSearch API into Milvus Vector DB hosted on (Zilliz)[https://cloud.zilliz.com/orgs/org-zocumtftvqemtejqpopiek/projects/proj-1a3103822ea4307031154a/clusters/in03-3acf9d8039d538c/collections/job_listings1].
 
-## Available Scripts
+## Scripts
 
 - `data_ingestion.py`: Ingests job postings into Milvus/Zilliz vector database
-- `data_ingestion_aws.py`: Ingests job postings into AWS DynamoDB
+- `job_titles.json`: Job titles for searching jobs and indexing to Vector DB
 
-## Environment Setup
+## Environment Setup (if running locally)
 
 1. Create a `.env` file in the root directory with the following variables:
 
@@ -19,11 +19,6 @@ JSEARCH_API_KEY=your_jsearch_api_key_here
 # Milvus/Zilliz Configuration (for data_ingestion.py)
 ZILLZ_URI=your_zilliz_uri_here
 ZILLZ_TOKEN=your_zilliz_token_here
-
-# AWS Credentials (for data_ingestion_aws.py when running locally)
-AWS_ACCESS_KEY_ID=your_aws_access_key_id
-AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
-AWS_REGION=us-east-1
 ```
 
 2. Install the required dependencies:
@@ -32,7 +27,7 @@ AWS_REGION=us-east-1
 pip install -r requirements.txt
 ```
 
-## Usage
+3. Usage
 
 ### Milvus/Zilliz Integration
 
@@ -42,17 +37,10 @@ To ingest job postings into Milvus/Zilliz:
 python data_ingestion/data_ingestion.py
 ```
 
-### AWS DynamoDB Integration (on hold)
 
-To ingest job postings into AWS DynamoDB:
+## Data Table Structure
 
-```bash
-python data_ingestion/data_ingestion_aws.py
-```
-
-## DynamoDB Table Structure
-
-The DynamoDB table `job_listings` has the following structure:
+The table `job_listings` has the following structure:
 
 - **Primary Key**: `job_id` (String)
 - **Attributes**:
@@ -82,28 +70,8 @@ Both scripts can be deployed as AWS Lambda functions. The `lambda_handler` funct
 3. **Environment Variables**: Configure the following environment variables in Lambda:
    - `JSEARCH_URL`
    - `JSEARCH_API_KEY`
-
-### IAM Role Configuration
-
-When deploying to Lambda, you need to create an IAM role with the following permissions:
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "dynamodb:PutItem",
-                "dynamodb:GetItem",
-                "dynamodb:DescribeTable",
-                "dynamodb:CreateTable"
-            ],
-            "Resource": "arn:aws:dynamodb:*:*:table/job_listings"
-        }
-    ]
-}
-```
+   - `ZILLZ_TOKEN`
+   - `ZILLZ_URI`
 
 ### Lambda vs. Local Execution
 

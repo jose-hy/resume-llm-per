@@ -1,6 +1,7 @@
 # Resume Matching LLM (Backend)
 
 There are three parts of the backend, API, Vector DB, and Data Ingestion Pipeline.
+
 See VectorDB and Ingestion Pipeline at [HERE](https://github.com/de-data-lab/resume-matching-llm/tree/1-jsearch-dataingestion/data_ingestion#job-posting-data-ingestion) 
 
 ## Backend API

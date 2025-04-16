@@ -69,7 +69,8 @@ The scripts can be deployed as AWS Lambda functions. The `lambda_handler` functi
 Since the data ingestion pipeline comsumes larger computer resources than normal lambda function limits, we containerize the pipeline to run on Lambda.
 
 ```bash
-./data_ingestion/build.sh
+cd data_ingestion
+./build.sh
 ```
 
 Check the scrip in more details. It first build the image then push the image to AWS ECR. You might be prompt to login AWS.

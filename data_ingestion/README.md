@@ -25,8 +25,8 @@ The table `job_listings` has the following structure:
   - `employment_type`: String
   - `citizenship`: Boolean
   - `job_apply_link`: String
-  - `job_posted_at`: Number (timestamp in milliseconds)
-  - `job_posted_at_datetime`: String (ISO format)
+  - `job_posted_at`: Number (timestamp in milliseconds for sorting)
+  - `job_posted_at_datetime`: String (ISO format, human readable format)
   - `insert_time`: String (ISO format)
 
 
@@ -73,6 +73,8 @@ The scripts can be deployed as AWS Lambda functions. The `lambda_handler` functi
    - `JSEARCH_API_KEY`
    - `ZILLZ_TOKEN`
    - `ZILLZ_URI`
+
+On AWS Lambda console: Go to Functions --> jobmatchingest --> Configuration to set up environment variables.
 
 
 ## Notes

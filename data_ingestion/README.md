@@ -64,18 +64,21 @@ python data_ingestion/data_ingestion.py
 
 The scripts can be deployed as AWS Lambda functions. The `lambda_handler` function in each script is designed to be triggered by AWS Lambda.
 
-### Image building
+### Image Building
 Since the data ingestion pipeline comsumes larger computer resources than normal lambda function limits, we containerize the pipeline to run on Lambda.
 
 ```bash
-.data_ingestion/build.sh
+./data_ingestion/build.sh
 ```
+
+Check the scrip in more details. It first build the image then push the image to AWS ECR.
 
 ### Lambda Configuration
 
-1. **Memory**: Set to at least 1024 MB (1 GB) for optimal performance
-2. **Timeout**: Set to at least 5 minutes (300 seconds) as the script may take time to process all jobs
-3. **Environment Variables**: Configure the following environment variables in Lambda:
+1. **Image**: Set it to corresponding image version on AWS ECR.
+2. **Memory**: Set to at least 1024 MB (1 GB) for optimal performance
+3. **Timeout**: Set to at least 5 minutes (300 seconds) as the script may take time to process all jobs
+4. **Environment Variables**: Configure the following environment variables in Lambda:
    - `JSEARCH_URL`
    - `JSEARCH_API_KEY`
    - `ZILLZ_TOKEN`

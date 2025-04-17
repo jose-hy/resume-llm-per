@@ -31,8 +31,7 @@ COPY --from=build /app/src/main/resources/application.properties /config/
 ENV SPRING_PROFILES_ACTIVE=prod \
     SERVER_PORT=8080 \
     DB_URL=jdbc:postgresql://localhost:5432/mydb \
-    DB_USERNAME=user \
-    DB_PASSWORD=password
+    DB_USERNAME=user
 
 # Expose the port
 EXPOSE ${SERVER_PORT}

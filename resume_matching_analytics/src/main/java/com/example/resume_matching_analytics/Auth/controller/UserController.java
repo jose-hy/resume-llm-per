@@ -28,11 +28,11 @@ public class UserController {
 
         ResponseCookie cookie = ResponseCookie.from("accessCode", token)
                 .maxAge(60 * 60 * 1000)
-                .sameSite("Strict")
+                .sameSite(env.equals("development") ? "Lax" : "Strict")
                 .httpOnly(true)
-                .secure(true)
+                .secure(!env.equals("development"))
                 .path("/")
-                .domain(".interviewmoves.org")
+                .domain(env.equals("development") ? "localhost" : ".interviewmoves.org")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
@@ -41,15 +41,16 @@ public class UserController {
     public void login(@RequestBody User user, HttpServletResponse response, HttpServletRequest req) {
         String token = service.verify(user);
         String env = System.getProperty("env");
+        System.out.println(env == "development");
         ResponseCookie cookie = ResponseCookie.from("accessCode", token)
                 .maxAge(60 * 60 * 1000)
-                .sameSite(env === "development" ? "Lax" : "Strict")
+                .sameSite(env.equals("development") ? "Lax" : "Strict")
                 .httpOnly(true)
-                .secure(env !== "development")
-//                .secure(true)
+                .secure(!env.equals("development"))
                 .path("/")
-                .domain(env === "development" ? "localhost" : ".interviewmoves.org")
+                .domain(env.equals("development") ? "localhost" : ".interviewmoves.org")
                 .build();
+        System.out.println(cookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
@@ -58,10 +59,10 @@ public class UserController {
         ResponseCookie cookie = ResponseCookie.from("accessCode", "")
                 .maxAge(0)
                 .httpOnly(true)
-                .sameSite("Strict")
-                .secure(true)
+                .sameSite(env.equals("development") ? "Lax" : "Strict")
+                .secure(!env.equals("development"))
                 .path("/")
-                .domain(".interviewmoves.org")
+                .domain(env.equals("development") ? "localhost" : ".interviewmoves.org")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }

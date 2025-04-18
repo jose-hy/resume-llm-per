@@ -57,6 +57,10 @@ public class AnalyticsService {
         }
     }
 
+    public void updateAppliedTo(Map<String, Object> payload) {
+        analyticsRepository.updateAppliedTo(payload.get("job_id"), payload.get("job_title"), payload.get("location"), payload.get("url"), payload.get("remote"));
+    }
+
     public void updateJobsViewed(Map<String, Object> payload) {
         analyticsRepository.updateJobsViewed(payload.get("jobs_count"), payload.get("jobs_viewed"), payload.get("session_id"));
     }

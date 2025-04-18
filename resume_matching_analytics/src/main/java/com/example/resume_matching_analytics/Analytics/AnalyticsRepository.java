@@ -33,6 +33,11 @@ public interface AnalyticsRepository extends JpaRepository<Analytics, Long> {
     @Transactional
     @Query(value = "UPDATE analytics SET data = data || jsonb_build_object('viewed', to_jsonb((data->>'viewed')::int4+ :jobs_count), 'clicked_on', to_jsonb((data->>'clicked_on')::int4 + :jobs_viewed)) where data->>'session_id' = :session_id and type = 'jobs_viewed';", nativeQuery = true)
     void updateJobsViewed(@Param("jobs_count") Object jobs_count, @Param("jobs_viewed") Object jobs_viewed, @Param("session_id") Object session_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO applied_to (job_id, job_title, location, url, remote) values (:job_id, :job_title, :location, :url, :remote) ON CONFLICT (job_id, job_title) DO UPDATE SET count = applied_to.count + 1;", nativeQuery = true)
+    void updateAppliedTo(@Param("job_id") Object job_id, @Param("job_title") Object job_title, @Param("location") Object location, @Param("url") Object url, @Param("remote") Object remote);
 }
 
 

@@ -41,7 +41,6 @@ public class UserController {
     public void login(@RequestBody User user, HttpServletResponse response, HttpServletRequest req) {
         String token = service.verify(user);
         String env = System.getProperty("env");
-        System.out.println(env == "development");
         ResponseCookie cookie = ResponseCookie.from("accessCode", token)
                 .maxAge(60 * 60 * 1000)
                 .sameSite(env.equals("development") ? "Lax" : "Strict")
@@ -50,12 +49,12 @@ public class UserController {
                 .path("/")
                 .domain(env.equals("development") ? "localhost" : ".interviewmoves.org")
                 .build();
-        System.out.println(cookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     @GetMapping("/logout_user")
     public void logout_user(HttpServletResponse response) {
+        String env = System.getProperty("env");
         ResponseCookie cookie = ResponseCookie.from("accessCode", "")
                 .maxAge(0)
                 .httpOnly(true)

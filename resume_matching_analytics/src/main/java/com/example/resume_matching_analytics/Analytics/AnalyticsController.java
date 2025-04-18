@@ -22,6 +22,11 @@ public class AnalyticsController {
         return analyticsService.getAnalytics();
     }
 
+    @PostMapping("/appliedTo")
+    public void appliedTo(@RequestBody Map<String, Object> payload) {
+        analyticsService.updateAppliedTo(payload);
+    }
+
     @PostMapping("/handleJobClickedOn")
     public void handleJobClickedOn(@RequestBody AddAnalyticsDTO payload, HttpServletRequest req) {
         analyticsService.initializeAnalytics(payload, req);

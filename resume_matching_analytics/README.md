@@ -73,7 +73,7 @@ sudo systemctl restart postgresql
 
 Update your EC2 security group to allow traffic on port 5432
 
-### SQL table queries
+## SQL table queries
 
 ### Create analytics table
 

@@ -1,4 +1,4 @@
-let isDevelopment = false;
+let isDevelopment = process.env.NODE_ENV === "development";
 export const url = isDevelopment
   ? "http://localhost:8080"
   : "https://server.interviewmoves.org";
@@ -7,7 +7,7 @@ const request = (type: "POST" | "PUT" | "GET") => {
   return (
     endpoint: string,
     body?: { [index: string]: any },
-    params?: { [index: string]: any }
+    params?: { [index: string]: any },
   ) => {
     let obj = { ...params };
 

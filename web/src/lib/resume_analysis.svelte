@@ -2,17 +2,17 @@
   import { marked } from "marked";
   import { onMount } from "svelte";
 
-  import { store } from "./store.svelte";
   import Spacer from "./spacer.svelte";
 
   let isLoading = $state(false);
-  const { file } = store;
+
   const {
     improvement,
     disqualification,
     setImprovement,
     setDisqualification,
     description,
+    file,
   } = $props();
 
   const getData = async (endpoint: string, formData: FormData) => {
@@ -25,7 +25,7 @@
         },
         method: "POST",
         body: formData,
-      }
+      },
     );
 
     return await res.json();
@@ -40,8 +40,6 @@
     const formData = new FormData();
     formData.append("resume", file);
     formData.append("job_description", description);
-
-    console.log("loading");
 
     const [disqualificationData, improvementData] = await Promise.all([
       getData("disqualification", formData),

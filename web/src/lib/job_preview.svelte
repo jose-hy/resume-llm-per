@@ -1,20 +1,28 @@
 <script lang="ts">
   import Spacer from "./spacer.svelte";
-  import Dialog from "$lib/dialog.svelte";
+  import JobDialog from "$lib/job_dialog.svelte";
+  import AppliedToDialog from "$lib/applied_to_dialog.svelte";
   import dayjs from "dayjs";
   import relativeTime from "dayjs/plugin/relativeTime";
-  import { store, type JobListing } from "./store.svelte";
   import { stateAbbreviations } from "../utils";
+  import { createDialog } from "svelte-headlessui";
+  import type { JobListing } from "./types";
 
   dayjs.extend(relativeTime);
 
   const {
     handleJobClicked,
     jobListing,
+    jobListings,
+    file,
   }: {
     handleJobClicked: () => void;
     jobListing: JobListing;
+    jobListings: JobListing[];
+    file: File | null;
   } = $props();
+
+  const appliedToDialog = createDialog();
 
   const generateScoreString = (score: number) => {
     let str = "";
@@ -42,6 +50,8 @@
     job_location,
     job_title,
     score,
+    job_id,
+    remote,
   } = jobListing;
 
   const [city, state] = job_location.split(",").map((s) => s.trim());
@@ -57,7 +67,8 @@
 </script>
 
 <div
-  class="bg-white [border:1px_solid_#DADADA] rounded-8px max-[600px]:w-full w-[45vw] max-w-[650px] px-20px py-14px"
+  class="bg-white [border:1px_solid_#DADADA] rounded-8px
+    max-[600px]:w-full w-[45vw] max-w-[650px] px-20px py-14px"
 >
   <div class="flex justify-between gap-[20px]">
     <div>
@@ -69,9 +80,10 @@
         {city}, {abbrState} | {formattedTime}
       </p>
     </div>
-    {#if store.jobListings}
+    {#if jobListings}
       <p
-        class={"bg-[#ECE5AC] max-w-min whitespace-nowrap h-full px-[6px] py-4px rounded-4px text-14px"}
+        class="bg-[#ECE5AC] max-w-min whitespace-nowrap
+        h-full px-[6px] py-4px rounded-4px text-14px"
       >
         {scoreString}
       </p>
@@ -89,12 +101,15 @@
         href={link}
         target="_blank"
         rel="noopener noreferrer"
-        onclick={handleJobClicked}
+        onclick={() => {
+          handleJobClicked;
+          appliedToDialog.open();
+        }}
       >
         Apply
       </a>
     </div>
-    <Dialog
+    <JobDialog
       {description}
       {company}
       {job_title}
@@ -102,6 +117,15 @@
       {abbrState}
       {link}
       {formattedTime}
+      {file}
+    />
+    <AppliedToDialog
+      dialog={appliedToDialog}
+      {remote}
+      {link}
+      {job_id}
+      {job_location}
+      {job_title}
     />
   </div>
 </div>

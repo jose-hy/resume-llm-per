@@ -2,11 +2,9 @@
   import { onMount } from "svelte";
   import Spacer from "./spacer.svelte";
 
-  import { store } from "./store.svelte";
-
   let isLoading = $state(false);
-  const { file } = store;
-  const { coverLetter, setCoverLetter, description } = $props();
+
+  const { coverLetter, setCoverLetter, description, file } = $props();
 
   onMount(async () => {
     if (coverLetter) {
@@ -14,13 +12,13 @@
     }
     isLoading = true;
     const url = new URL(
-      "https://jobmatch-api.orangemoss-fa3f1656.eastus.azurecontainerapps.io/api/v1/generate/cover-letter"
+      "https://jobmatch-api.orangemoss-fa3f1656.eastus.azurecontainerapps.io/api/v1/generate/cover-letter",
     );
 
     const formData = new FormData();
     formData.append("resume", file);
     formData.append("job_description", description);
-    console.log("loading");
+
     const res = await fetch(url, {
       headers: {
         Accept: "application/json",

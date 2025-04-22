@@ -3,8 +3,8 @@
   import Transition from "svelte-transition";
 
   import Spacer from "./spacer.svelte";
-  import CoverLetter from "./cover_letter.svelte";
   import ResumeAnalysis from "./resume_analysis.svelte";
+  import CoverLetter from "./cover_letter.svelte";
 
   const {
     description,
@@ -14,6 +14,7 @@
     abbrState,
     link,
     formattedTime,
+    file,
   } = $props();
   const dialog = createDialog();
   let page = $state("overview");
@@ -37,10 +38,7 @@
 <button
   type="button"
   class="[border:1px_solid_black] rounded-4px px-12px py-4px"
-  onclick={() => {
-    dialog.open();
-    // handleJobClicked();
-  }}>Learn more</button
+  onclick={dialog.open}>Learn more</button
 >
 
 <div class="relative z-10">
@@ -62,21 +60,24 @@
     <div class="fixed inset-0 overflow-y-auto">
       <div class="flex min-h-full items-center justify-center p-4 text-center">
         <Transition
-          enter="ease-out duration-300"
           enterFrom="opacity-0 scale-95"
+          enter="ease-out duration-300"
           enterTo="opacity-100 scale-100"
           leave="ease-in duration-200"
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-95"
         >
           <div
-            class="w-full max-w-[800px] transform overflow-hidden rounded-12px bg-white p-6 text-left align-middle shadow-xl transition-all"
+            class="w-full max-w-[800px] transform overflow-hidden rounded-12px
+              bg-white p-6 text-left align-middle shadow-xl transition-all"
             use:dialog.modal
           >
             <div class="flex justify-between">
               <div>
                 <p class="font-600 text-24px">{job_title}</p>
-                <p>{company} | {city}, {abbrState} | {formattedTime}</p>
+                <p>
+                  {company} | {city}, {abbrState} | {formattedTime}
+                </p>
               </div>
               <a
                 class="bg-black text-white rounded-4px px-12px py-4px h-full"
@@ -97,14 +98,18 @@
                 class={page === "overview"
                   ? "bg-white px-8px py-4px rounded-7px"
                   : ""}>Overview</button
-              ><button
+              >
+              <button
                 onclick={() => (page = "resume-analysis")}
                 class={`${
                   page === "resume-analysis"
                     ? "bg-white px-8px py-4px rounded-7px"
                     : ""
-                } whitespace-nowrap`}>Resume analysis</button
-              ><button
+                } whitespace-nowrap`}
+              >
+                Resume analysis
+              </button>
+              <button
                 onclick={() => (page = "cover-letter")}
                 class={`${
                   page === "cover-letter"
@@ -123,9 +128,15 @@
                 {disqualification}
                 {improvement}
                 {description}
+                {file}
               />
             {:else}
-              <CoverLetter {setCoverLetter} {coverLetter} {description} />
+              <CoverLetter
+                {setCoverLetter}
+                {coverLetter}
+                {description}
+                {file}
+              />
             {/if}
             <Spacer size={24} axis="y" />
             <button

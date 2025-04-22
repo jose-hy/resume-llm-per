@@ -9,14 +9,12 @@ export const load: PageServerLoad = async ({ request }) => {
     },
   });
 
-  console.log(await res.text());
-
   let defaultJobListings: JobListing[] = [];
 
   if (res.status === 200) {
     try {
       const res = await fetch(
-        "https://jobmatch-api.orangemoss-fa3f1656.eastus.azurecontainerapps.io/api/v1/latest_jobs"
+        "https://jobmatch-api.orangemoss-fa3f1656.eastus.azurecontainerapps.io/api/v1/latest_jobs",
       );
       const data = await res.json();
       defaultJobListings = data;

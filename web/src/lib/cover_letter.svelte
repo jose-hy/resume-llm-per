@@ -34,7 +34,14 @@
 
 <div>
   {#if isLoading}
-    <p>Generating cover letter</p>
+    <div class="flex items-center gap-2">
+      <p>Generating cover letter</p>
+      <div
+        class="border-t-[black] border-l-[black] border-b-[black]
+        w-[16px] h-[16px] border-[2px] border-transparent
+        spinner animate-spin rounded-circle"
+      ></div>
+    </div>
   {:else}
     <p class="font-600 text-24px">Cover letter</p>
     <Spacer size={8} axis="y" />

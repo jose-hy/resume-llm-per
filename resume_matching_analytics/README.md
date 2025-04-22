@@ -142,47 +142,49 @@ CREATE TABLE applied_to (
 
 The server handles analytics and authentication. It's built with Java Spring Boot and is hosted on EC2.
 
+### Running locally
+
+- Install Java (SDK 24.0.1) and Maven 
+
+- Start the local server
+
+```
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-DDB_URL='jdbc:postgresql://<EC2_IP_ADDRESS>:5432/resume_matching' -DDB_PASSWORD='<PASSWORD>' -DSECRET_KEY='<SECRET_KEY>' -Denv=development"
+```
+
+Note: it's recommended to connect to a locally running database
+
+### Building Docker image and uploading to Elastic Container Registry
+
+- Log in to AWS via the command line on your local terminal
+
+- Authenticate Docker client with registry:
+
+```
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 593510232307.dkr.ecr.us-east-1.amazonaws.com
+```
+
+- Build image
+
+```
+docker build -t resume-matching .
+```
+
+- Tag the image:
+
+```
+docker tag resume-matching:latest 593510232307.dkr.ecr.us-east-1.amazonaws.com/resume-matching:latest
+```
+
+- Push to the registry:
+
+```
+docker push 593510232307.dkr.ecr.us-east-1.amazonaws.com/resume-matching:latest
+``` 
+
+### Running on AWS
+
 To set up, create an EC2 instance with Amazon Linux and t4g.nano
-
-- Connect EC2 to GitHub using SSH by generating an SSH key pair on your EC2 instance:
-
-```
-ssh-keygen -t ed25519 -C "your_email@example.com"
-```
-
-- Start the SSH agent in the background:
-
-```
-eval "$(ssh-agent -s)"
-```
-
-- Add your private key to the SSH agent:
-
-```
-ssh-add ~/.ssh/id_ed25519
-```
-
-- View and copy your public key:
-
-```
-cat ~/.ssh/id_ed25519.pub
-```
-
-Add this key to your GitHub account:
-
-- Go to GitHub.com → Settings → SSH and GPG keys
-- Click "New SSH key"
-- Give it a descriptive title (e.g., "EC2 Instance")
-- Paste your public key
-- Click "Add SSH key"
-
-- Install Git using:
-
-```
-sudo apt install git -y
-```
-
-- Clone repo
 
 - Install docker:
 
@@ -204,10 +206,22 @@ sudo systemctl enable docker
 sudo docker build -t resume-matching .
 ```
 
+- Check for any running processes
+
+```
+docker ps
+```
+
+- Stop running instances
+
+```
+docker stop <container_id>
+```
+
 - Start server:
 
 ```
-sudo docker run -d -p 8080:8080 -e SECRET_KEY=<SECRET_KEY> -e DB_URL=jdbc:postgresql://<IP_ADDRESS_OR_URL>/<db_name> -e DB_USERNAME=postgres -e DB_PASSWORD=<> -e SPRING_PROFILES_ACTIVE=prod resume-matching
+sudo docker run -d -p 8080:8080 -e SECRET_KEY=<secret_key> -e DB_URL=jdbc:postgresql://<EC2_IP_ADDRESS>:5432/resume_matching -e DB_USERNAME=postgres -e DB_PASSWORD=<PASSWORD> -e SPRING_PROFILES_ACTIVE=prod 593510232307.dkr.ecr.us-east-1.amazonaws.com/resume-matching
 ```
 
 ### SSL and certificate renewal

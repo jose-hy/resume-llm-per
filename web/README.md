@@ -2,6 +2,8 @@
 
 Install with `npm` and run with `npm run dev`
 
+This project uses the [Svelte](http://svelte.dev) frontend framework
+
 ## Analytics
 
 There are three types of analytics collected:
@@ -9,11 +11,7 @@ There are three types of analytics collected:
 - DAU
   - When user first opens the site
 - Number of jobs clicked and number of jobs fetched per session
-- Whether at least one job was clicked per session
-
-## State
-
-Global state is located in the store.svelte.ts file
+- Top ten jobs
 
 ## Styling
 

@@ -200,12 +200,6 @@ sudo service docker start
 sudo systemctl enable docker
 ```
 
-- Build Docker Image:
-
-```
-sudo docker build -t resume-matching .
-```
-
 - Check for any running processes
 
 ```
@@ -216,6 +210,18 @@ docker ps
 
 ```
 docker stop <container_id>
+```
+
+- Authenticate with AWS
+
+```
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 593510232307.dkr.ecr.us-east-1.amazonaws.com
+```
+
+- Pull most recent image
+
+```
+docker pull 593510232307.dkr.ecr.us-east-1.amazonaws.com/resume-matching:latest
 ```
 
 - Start server:

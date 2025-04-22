@@ -16,17 +16,30 @@
   let email = $state("");
   let status = $state("sign in");
   let password = $state("");
+  let isLoading = $state(false);
 
   const register = async () => {
     if (form.validate({ email, password })) {
-      await post("/register", { username: email, password });
-      invalidateAll();
+      isLoading = true;
+      try {
+        await post("/register", { username: email, password });
+
+        invalidateAll();
+      } catch (err) {
+        isLoading = false;
+      }
     }
   };
 
   const login = async () => {
-    const res = await post("/login", { username: email, password });
-    invalidateAll();
+    isLoading = true;
+    try {
+      await post("/login", { username: email, password });
+      invalidateAll();
+    } catch (err) {
+      console.log(err);
+      isLoading = false;
+    }
   };
 </script>
 
@@ -59,10 +72,18 @@
     <Spacer axis="y" size={24} />
     <p>{form.errors.password}</p>
     <button
-      class="bg-black text-white rounded-8px px-12px py-8px w-full mx-auto"
+      class="bg-black text-white rounded-8px px-12px py-8px w-full mx-auto
+      flex items-center gap-4 justify-center"
       onclick={status === "sign in" ? login : register}
     >
       {status === "sign in" ? "Sign in" : "Register"}
+      {#if isLoading}
+        <div
+          class="border-t-[white] border-l-[white] border-b-[white]
+        w-[16px] h-[16px] border-[2px] border-transparent
+        spinner animate-spin rounded-circle"
+        ></div>
+      {/if}
     </button>
     <Spacer axis="y" size={24} />
     {#if status === "sign in"}

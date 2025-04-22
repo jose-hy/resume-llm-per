@@ -15,6 +15,7 @@
   let degreeRequirements: string[] = $state([]);
   let employmentType: string[] = $state([]);
   let file: Blob | string = $state("");
+  let isMoreJobs = $state(true);
 
   const setDegreeRequirements = (d: string[]) => (degreeRequirements = d);
   const setLocations = (d: string[]) => (locations = d);
@@ -71,9 +72,15 @@
           jobListings = [];
         } else {
           jobListings = data;
+          if (data.length < 10) {
+            isMoreJobs = false;
+          }
         }
       } else if (jobListings) {
         jobListings = [...jobListings, ...data];
+        if (data.length < 10) {
+          isMoreJobs = false;
+        }
       }
     } catch (err) {
       console.log(err);
@@ -124,6 +131,7 @@
       {sessionID}
       {defaultJobListings}
       {file}
+      {isMoreJobs}
     />
   </div>
 </div>

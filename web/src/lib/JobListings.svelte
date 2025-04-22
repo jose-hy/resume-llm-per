@@ -5,8 +5,14 @@
 
   let isLoading = $state(false);
 
-  const { sessionID, defaultJobListings, jobListings, getJobListings, file } =
-    $props();
+  const {
+    sessionID,
+    defaultJobListings,
+    jobListings,
+    getJobListings,
+    file,
+    isMoreJobs,
+  } = $props();
 
   let jobsClicked = $state(new Set<string>());
 
@@ -53,7 +59,7 @@
       <Spacer axis="y" size="16" />
     {/each}
   {/if}
-  {#if jobListings && jobListings.length > 0}
+  {#if jobListings && jobListings.length > 0 && isMoreJobs}
     <button
       class="bg-black text-white rounded-4px px-12px py-4px
       max-w-min whitespace-nowrap mx-auto flex gap-12px items-center"

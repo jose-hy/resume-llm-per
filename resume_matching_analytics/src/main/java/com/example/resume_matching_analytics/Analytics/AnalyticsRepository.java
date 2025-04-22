@@ -26,11 +26,6 @@ public interface AnalyticsRepository extends JpaRepository<Analytics, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "insert into analytics (username, data, type) values (:username, CAST(:data as JSONB), :type) on conflict (username, (data->>'session_id'), type) do update set data = jsonb_set(analytics.data, '{value}', true::text::jsonb);", nativeQuery = true)
-    void atLeastOneJobSelected(@Param("username") String username, @Param("data") String data, @Param("type") String type);
-
-    @Modifying
-    @Transactional
     @Query(value = "UPDATE analytics SET data = data || jsonb_build_object('viewed', to_jsonb((data->>'viewed')::int4+ :jobs_count), 'clicked_on', to_jsonb((data->>'clicked_on')::int4 + :jobs_viewed)) where data->>'session_id' = :session_id and type = 'jobs_viewed';", nativeQuery = true)
     void updateJobsViewed(@Param("jobs_count") Object jobs_count, @Param("jobs_viewed") Object jobs_viewed, @Param("session_id") Object session_id);
 

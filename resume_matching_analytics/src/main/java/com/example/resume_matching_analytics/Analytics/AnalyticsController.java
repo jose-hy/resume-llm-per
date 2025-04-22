@@ -42,20 +42,9 @@ public class AnalyticsController {
         analyticsService.updateJobsViewed(payload);
     }
 
-    @PostMapping("/atLeastOneJobSelected")
-    public void atLeastOneJobSelected(@RequestBody AddAnalyticsDTO payload, HttpServletRequest req) {
-        analyticsService.atLeastOneJobSelected(payload, req);
-    }
-
     @DeleteMapping(path = "{analyticsId}")
     public void deleteAnalytics(@PathVariable("analyticsId") Long analyticsId) {
         analyticsService.deleteAnalytics(analyticsId);
     }
-
-//    @PutMapping(path = "{analyticsId}")
-//    public void updateAnalytics(@PathVariable("analyticsId") Long analyticsId, @RequestParam(required = true) String type) {
-//        analyticsService.updateAnalytics(analyticsId, type);
-//    }
-
 }
 

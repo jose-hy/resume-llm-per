@@ -65,10 +65,6 @@ public class AnalyticsService {
         analyticsRepository.updateJobsViewed(payload.get("jobs_count"), payload.get("jobs_viewed"), payload.get("session_id"));
     }
 
-    public void atLeastOneJobSelected(AddAnalyticsDTO payload, HttpServletRequest req) {
-        analyticsRepository.atLeastOneJobSelected(getUsername(req),  payload.getData(), payload.getType());
-    }
-
     public void deleteAnalytics(Long analyticsId) {
         analyticsRepository.deleteById(analyticsId);
     }

@@ -72,7 +72,7 @@
 >
   <div class="flex justify-between gap-[20px]">
     <div>
-      <p class="font-700 text-18px">{job_title}</p>
+      <p class="font-700 text-20px">{job_title}</p>
       <p class="14px font-500">
         {company}
       </p>

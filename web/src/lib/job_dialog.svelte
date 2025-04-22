@@ -89,21 +89,21 @@
               </a>
             </div>
             <Spacer axis="y" size="24" />
-
             <div
-              class="flex gap-16px bg-[#F2F2F2] px-12px py-8px rounded-7px w-min"
+              class="flex gap-16px bg-[#F2F2F2] px-12px py-8px
+              [border:1px_solid_#D9D9D9] rounded-7px w-min"
             >
               <button
                 onclick={() => (page = "overview")}
                 class={page === "overview"
-                  ? "bg-white px-8px py-4px rounded-7px"
+                  ? "[border:1px_solid_#E6E6E6] bg-white px-8px py-4px rounded-6px"
                   : ""}>Overview</button
               >
               <button
                 onclick={() => (page = "resume-analysis")}
                 class={`${
                   page === "resume-analysis"
-                    ? "bg-white px-8px py-4px rounded-7px"
+                    ? "[border:1px_solid_#E6E6E6] bg-white px-8px py-4px rounded-6px"
                     : ""
                 } whitespace-nowrap`}
               >
@@ -113,7 +113,7 @@
                 onclick={() => (page = "cover-letter")}
                 class={`${
                   page === "cover-letter"
-                    ? "bg-white px-8px py-4px rounded-7px"
+                    ? "[border:1px_solid_#E6E6E6] bg-white px-8px py-4px rounded-6px"
                     : ""
                 } whitespace-nowrap`}>Generate cover letter</button
               >

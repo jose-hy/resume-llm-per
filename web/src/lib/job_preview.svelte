@@ -67,7 +67,7 @@
 </script>
 
 <div
-  class="bg-white [border:1px_solid_#DADADA] rounded-8px
+  class="bg-white [border:1px_solid_#E6E6E6] rounded-8px
     max-[600px]:w-full w-[45vw] max-w-[650px] px-20px py-14px"
 >
   <div class="flex justify-between gap-[20px]">

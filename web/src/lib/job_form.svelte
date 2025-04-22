@@ -20,7 +20,7 @@
 </script>
 
 <div
-  class="bg-white max-[600px]:mb-4 [border:1px_solid_#DADADA]
+  class="bg-white max-[600px]:mb-4 [border:1px_solid_#E6E6E6]
   max-[600px]:w-full max-[600px]:max-w-full w-[50vw] rounded-8px
   max-w-[400px] max-[600px]:relative sticky top-24px px-24px py-32px"
 >

@@ -117,6 +117,22 @@ CREATE TABLE applied_to (
 );
 ```
 
+### Connecting to the database
+
+The database can be accessed via EC2 Instance Connect and running
+```
+sudo -u postgres psql
+\c resume_matching
+```
+
+or by running in your local command line with:
+
+```
+psql -h 52.6.81.11 -p 5432 -U postgres -d resume_matching
+```
+
+You will also be prompted to enter your password
+
 ## Setting up the server
 
 The server handles analytics and authentication. It's built with Java Spring Boot and is hosted on EC2.

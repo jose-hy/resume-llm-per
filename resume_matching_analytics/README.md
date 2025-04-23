@@ -297,6 +297,5 @@ limit
 - The Spring Security library is used to facilitate auth
 - When a user submits their email and password, their password is hashed with bcrypt and stored in the database.
 - Spring Security creates a JWT based on the secret key
-- JWT is sent back to the client and stored in browser's cookies 
+- JWT is sent back to the client and stored in browser's cookies (these are called HTTP cookies)
 - When the client sends a request, it attaches the cookie so that the server can authorize the request
-- These are called HTTP cookies

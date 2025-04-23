@@ -131,7 +131,7 @@ or by running in your local command line with:
 psql -h 52.6.81.11 -p 5432 -U postgres -d resume_matching
 ```
 
-You will also be prompted to enter your password
+You will also be prompted to enter the database password
 
 ## Setting up the server
 

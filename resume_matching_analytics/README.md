@@ -144,7 +144,7 @@ The server handles analytics and authentication. It's built with Java Spring Boo
 - Start the local server
 
 ```
-mvn spring-boot:run -Dspring-boot.run.jvmArguments="-DDB_URL='jdbc:postgresql://<EC2_IP_ADDRESS>:5432/resume_matching' -DDB_PASSWORD='<PASSWORD>' -DSECRET_KEY='<SECRET_KEY>' -Denv=development"
+env=development mvn spring-boot:run -Dspring-boot.run.jvmArguments="-DDB_URL='jdbc:postgresql://<EC2_IP_ADDRESS>:5432/resume_matching' -DDB_PASSWORD='<PASSWORD>' -DSECRET_KEY='<SECRET_KEY>' -Denv=development"
 ```
 
 Note: it's recommended to connect to a locally running database
@@ -222,7 +222,7 @@ docker pull 593510232307.dkr.ecr.us-east-1.amazonaws.com/resume-matching:latest
 - Start server:
 
 ```
-sudo docker run -d -p 8080:8080 -e SECRET_KEY=<secret_key> -e DB_URL=jdbc:postgresql://<EC2_IP_ADDRESS>:5432/resume_matching -e DB_USERNAME=postgres -e DB_PASSWORD=<PASSWORD> -e SPRING_PROFILES_ACTIVE=prod 593510232307.dkr.ecr.us-east-1.amazonaws.com/resume-matching
+sudo docker run -d -p 8080:8080 -e SECRET_KEY=<secret_key> -e DB_URL=jdbc:postgresql://<EC2_IP_ADDRESS>:5432/resume_matching -e DB_USERNAME=postgres -e DB_PASSWORD=<PASSWORD> -e SPRING_PROFILES_ACTIVE=prod -e env=production 593510232307.dkr.ecr.us-east-1.amazonaws.com/resume-matching
 ```
 
 ### SSL and certificate renewal

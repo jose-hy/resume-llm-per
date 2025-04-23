@@ -24,7 +24,10 @@
   max-[600px]:w-full max-[600px]:max-w-full w-[50vw] rounded-8px
   max-w-[400px] max-[600px]:relative sticky top-24px px-24px py-32px"
 >
-  <p>This app matches your resume with job openings in the IT field.</p>
+  <p>
+    <span class="font-600">Interview Moves</span> matches your resume with job openings
+    in the IT field
+  </p>
   <Spacer axis="y" size="24" />
   <p class="font-600">Upload resume</p>
   <input

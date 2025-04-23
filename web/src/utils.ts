@@ -37,6 +37,9 @@ export const post = request("POST");
 
 export const put = request("PUT");
 
+export const backendURL = (endpoint: string) =>
+  `https://jobmatch-api.orangemoss-fa3f1656.eastus.azurecontainerapps.io/api/v1${endpoint}`;
+
 export const stateAbbreviations: Record<string, string> = {
   Alabama: "AL",
   Alaska: "AK",

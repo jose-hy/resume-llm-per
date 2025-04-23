@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Spacer from "./spacer.svelte";
+  import { backendURL } from "../utils";
 
   let isLoading = $state(false);
 
@@ -11,9 +12,7 @@
       return;
     }
     isLoading = true;
-    const url = new URL(
-      "https://jobmatch-api.orangemoss-fa3f1656.eastus.azurecontainerapps.io/api/v1/generate/cover-letter",
-    );
+    const url = new URL(backendURL("/generate/cover-letter"));
 
     const formData = new FormData();
     formData.append("resume", file);

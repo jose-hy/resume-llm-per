@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
 
   import Spacer from "./spacer.svelte";
+  import { backendURL } from "../utils";
 
   let isLoading = $state(false);
 
@@ -16,17 +17,13 @@
   } = $props();
 
   const getData = async (endpoint: string, formData: FormData) => {
-    const res = await fetch(
-      "https://jobmatch-api.orangemoss-fa3f1656.eastus.azurecontainerapps.io/api/v1/analyze/" +
-        endpoint,
-      {
-        headers: {
-          Accept: "application/json",
-        },
-        method: "POST",
-        body: formData,
+    const res = await fetch(backendURL("/analyze/") + endpoint, {
+      headers: {
+        Accept: "application/json",
       },
-    );
+      method: "POST",
+      body: formData,
+    });
 
     return await res.json();
   };

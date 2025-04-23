@@ -1,5 +1,5 @@
-import type { JobListing } from "$lib/store.svelte";
-import { get } from "../utils";
+import type { JobListing } from "$lib/types";
+import { backendURL, get } from "../utils";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ request }) => {
@@ -13,9 +13,7 @@ export const load: PageServerLoad = async ({ request }) => {
 
   if (res.status === 200) {
     try {
-      const res = await fetch(
-        "https://jobmatch-api.orangemoss-fa3f1656.eastus.azurecontainerapps.io/api/v1/latest_jobs",
-      );
+      const res = await fetch(backendURL("/latest_jobs"));
       const data = await res.json();
       defaultJobListings = data;
     } catch (err) {

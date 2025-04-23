@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import JobForm from "$lib/job_form.svelte";
-  import { get, post } from "./utils";
+  import { backendURL, get, post } from "./utils";
   import { invalidateAll } from "$app/navigation";
   import JobListings from "$lib/JobListings.svelte";
   import type { JobListing } from "$lib/types";
@@ -28,9 +28,7 @@
 
   const getJobListings = async (isNewSearch: boolean) => {
     try {
-      const url = new URL(
-        "https://jobmatch-api.orangemoss-fa3f1656.eastus.azurecontainerapps.io/api/v1/search_jobs",
-      );
+      const url = new URL(backendURL("/search_jobs"));
       for (let i = 0; i < locations.length; i++) {
         url.searchParams.append("location_state", locations[i]);
       }

@@ -247,12 +247,13 @@ The dashboard is built with Grafana. It uses the following SQL queries:
 select
   (data ->> 'viewed') :: int as viewed,
   (data ->> 'clicked_on') :: int as clicked_on,
-  ROW_NUMBER() over () :: text,
-  id::text
+  ROW_NUMBER() over () :: text
 from
   analytics
 where
-  type = 'jobs_viewed';
+  type = 'jobs_viewed'
+limit
+  30;
 ```
 
 ### Daily active users (bar chart)
@@ -266,7 +267,9 @@ from
 GROUP BY
   date_trunc('day', "timestamp")
 order by
-  date_trunc('day', "timestamp") asc;
+  date_trunc('day', "timestamp") asc
+limit
+  15;
 ```
 
 ### Top ten jobs (bar chart)

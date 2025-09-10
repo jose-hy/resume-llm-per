@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import JobForm from "$lib/job_form.svelte";
   import { backendURL, get, post } from "./utils";
-  import { invalidateAll } from "$app/navigation";
+  import { goto, invalidateAll } from "$app/navigation";
   import JobListings from "$lib/JobListings.svelte";
   import type { JobListing } from "$lib/types";
 
@@ -96,7 +96,7 @@
         }),
       }),
       post("/analytics/initializeAnalytics", {
-        type: "dau",
+        type: "dau", // Daily Active Users
         data: JSON.stringify({ count: 1, session_id: sessionID }),
       }),
     ]);
@@ -113,7 +113,7 @@
 </svelte:head>
 <div class="flex justify-center pt-48px px-16px">
   <div class="flex gap-24px items-start max-[600px]:flex-col">
-    <!-- <button onclick={logout}>logout</button> -->
+    <button onclick={logout}>logout</button>
     <JobForm
       {getJobListings}
       {setDegreeRequirements}

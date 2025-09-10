@@ -26,7 +26,7 @@
 >
   <p>
     <span class="font-600">Interview Moves</span> matches your resume with job openings
-    in the IT field
+    in the IT field.
   </p>
   <Spacer axis="y" size="24" />
   <p class="font-600">Upload resume</p>

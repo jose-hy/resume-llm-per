@@ -26,6 +26,7 @@
 
         invalidateAll();
       } catch (err) {
+        console.log(err);
         isLoading = false;
       }
     }

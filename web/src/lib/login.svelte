@@ -16,6 +16,7 @@
   let email = $state("");
   let status = $state("sign in");
   let password = $state("");
+  let confirmPassword = $state("");
   let isLoading = $state(false);
 
   const register = async () => {
@@ -70,6 +71,18 @@
         type="password"
       />
     </div>
+    <Spacer axis="y" size={20} />
+    {#if status === "sign up" }
+      <div class="flex flex-col gap-4px w-full">
+      <label class="font-600 text-15px" for="confirmPassword">Confirm Password</label>
+      <input
+        class="[border:1px_solid_#DADADA] rounded-4px px-8px py-[6px]"
+        bind:value={confirmPassword}
+        id="confirmPassword"
+        type="confirmPassword"
+      />
+    </div>
+    {/if}
     <Spacer axis="y" size={24} />
     <p>{form.errors.password}</p>
     <button

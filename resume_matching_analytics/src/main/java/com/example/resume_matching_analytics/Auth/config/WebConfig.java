@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Allow CORS for all endpoints
                 .allowedOriginPatterns("http://localhost:5173", 
-                "https://interviewmoves.org", "https://interviewmoves.org/*") // Specify the frontend origin
+                "https://*.interviewmoves.org", "https://interviewmoves.org/*") // Specify the frontend origin
                 .allowedMethods("GET", "POST", "PUT", "DELETE") // Allowed HTTP methods
                 .allowCredentials(true) // Allow credentials (cookies)
                 .allowedHeaders("*"); // Allow all headers

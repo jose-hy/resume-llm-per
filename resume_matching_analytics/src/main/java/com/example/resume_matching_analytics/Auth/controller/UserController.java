@@ -24,6 +24,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
+    @CrossOrigin
     public void register(@RequestBody User user, HttpServletResponse response) {
         String token = service.register(user);
         String env = System.getenv("env");
@@ -40,6 +41,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    @CrossOrigin
     public void login(@RequestBody User user, HttpServletResponse response, HttpServletRequest req) {
         String token = service.verify(user);
         String env = System.getenv("env");

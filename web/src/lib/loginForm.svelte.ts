@@ -35,7 +35,7 @@ export function formFunc<T extends Record<string, v.BaseSchema<any, any, any>>>(
             }
           }
         }
-        console.log(errors);
+        console.log("This is an error: ", errors);
       }
 
       return parsed.success;

@@ -2,6 +2,7 @@
   import { createDialog } from "svelte-headlessui";
   import Transition from "svelte-transition";
 
+  import CloseIcon from "$lib/icons/close_icon.svelte";
   import Spacer from "./spacer.svelte";
   import ResumeAnalysis from "./resume_analysis.svelte";
   import CoverLetter from "./cover_letter.svelte";
@@ -79,14 +80,19 @@
                   {company} | {city}, {abbrState} | {formattedTime}
                 </p>
               </div>
-              <a
-                class="bg-black text-white rounded-4px px-12px py-4px h-full"
-                href={link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Apply
-              </a>
+              <div class="flex gap-12px justify-end">
+                <a
+                  class="bg-black text-white rounded-4px px-12px py-4px h-[32px]"
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Apply
+                </a>
+                <button onclick={dialog.close} class="cursor-pointer w-[32px] h-[32px]">
+                  <CloseIcon/>
+                </button>
+              </div>
             </div>
             <Spacer axis="y" size="24" />
             <div
@@ -141,11 +147,19 @@
             <Spacer size={24} axis="y" />
             <button
               type="button"
-              class="bg-black text-white rounded-4px px-12px py-4px h-full"
+              class="[border:1px_solid_black] rounded-4px px-12px py-4px"
               onclick={dialog.close}
             >
-              Close
+              Back
             </button>
+            <a
+              class="bg-black text-white rounded-4px px-12px py-4px h-full"
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Apply
+            </a>
           </div>
         </Transition>
       </div>

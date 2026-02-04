@@ -6,9 +6,10 @@
   import Spacer from "./spacer.svelte";
 
   export const form = formFunc({
-    email: v.pipe(v.string(), v.email("Invalid email")),
+    email: v.pipe(v.string(), v.nonEmpty("Email is required"),
+    v.email("Invalid email")),
     password: v.pipe(
-      v.string(),
+      v.string(), v.nonEmpty("Password is required"),
       v.minLength(6, "Password must be at least 6 characters long"),
     ),
   });
@@ -18,13 +19,15 @@
   let password = $state("");
   let confirmPassword = $state("");
   let isLoading = $state(false);
+  let errorMsg = $state("");
+  // Stops button click when email/password is empty
+  let isEmpty = $derived(email === "" || password === "");
 
   const register = async () => {
     if (form.validate({ email, password })) {
       isLoading = true;
       try {
         await post("/register", { username: email, password });
-
         invalidateAll();
       } catch (err) {
         console.log(err);
@@ -35,12 +38,26 @@
 
   const login = async () => {
     isLoading = true;
+    errorMsg = "";
+    if (isEmpty) {
+      isLoading = false;
+      return;
+    }
     try {
-      await post("/login", { username: email, password });
+      const res = await post("/login", { username: email, password });
+      if (!res.ok) {
+        const data = await res.json();
+        errorMsg = data.error || "Login failed";
+        isLoading = false;
+        return;
+      }
+      console.log("Logged in");
       invalidateAll();
     } catch (err) {
-      console.log(err);
       isLoading = false;
+      errorMsg = "Incorrect username or password.";
+      console.log(err);
+      invalidateAll();
     }
   };
 </script>
@@ -71,6 +88,7 @@
         type="password"
       />
     </div>
+    <p>{form.errors.password}</p>
     <Spacer axis="y" size={20} />
     {#if status === "sign up" }
       <div class="flex flex-col gap-4px w-full">
@@ -83,8 +101,10 @@
       />
     </div>
     {/if}
-    <Spacer axis="y" size={24} />
-    <p>{form.errors.password}</p>
+    {#if errorMsg}
+      <div class="text-red-600 mb-2">{errorMsg}</div>
+    {/if}
+    <Spacer axis="y" size={20} />
     <button
       class="bg-black text-white rounded-8px px-12px py-8px w-full mx-auto
       flex items-center gap-4 justify-center"

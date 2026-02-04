@@ -16,12 +16,14 @@
     link,
     formattedTime,
     file,
+    applied,
   } = $props();
   const dialog = createDialog();
   let page = $state("overview");
   let coverLetter = $state("");
   let disqualification = $state("");
   let improvement = $state("");
+  let apply = $state(applied ? "View Application" : "Apply");
 
   const setCoverLetter = (s: string) => {
     coverLetter = s;
@@ -73,7 +75,7 @@
               bg-white p-6 text-left align-middle shadow-xl transition-all"
             use:dialog.modal
           >
-            <div class="flex justify-between">
+            <div class="flex justify-between gap-12px">
               <div>
                 <p class="font-600 text-24px">{job_title}</p>
                 <p>
@@ -87,7 +89,11 @@
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Apply
+                  {#if applied}
+                    Go
+                  {:else}
+                    Apply
+                  {/if}
                 </a>
                 <button onclick={dialog.close} class="cursor-pointer w-[32px] h-[32px]">
                   <CloseIcon/>
@@ -145,6 +151,14 @@
               />
             {/if}
             <Spacer size={24} axis="y" />
+            <a
+              class="bg-black text-white rounded-4px px-12px py-4px h-full"
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {apply}
+            </a>
             <button
               type="button"
               class="[border:1px_solid_black] rounded-4px px-12px py-4px"
@@ -152,14 +166,6 @@
             >
               Back
             </button>
-            <a
-              class="bg-black text-white rounded-4px px-12px py-4px h-full"
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Apply
-            </a>
           </div>
         </Transition>
       </div>

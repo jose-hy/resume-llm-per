@@ -2,6 +2,7 @@
   import JobPreview from "$lib/job_preview.svelte";
   import Spacer from "$lib/spacer.svelte";
   import { put } from "../utils";
+  import type { JobListing } from "./types";
 
   let isLoading = $state(false);
 
@@ -12,8 +13,10 @@
     getJobListings,
     file,
     isMoreJobs,
+    applied,
   } = $props();
 
+  let appliedHere = $state(applied);
   let jobsClicked = $state(new Set<string>());
 
   const updateJobsViewed = async (
@@ -30,6 +33,7 @@
   const handleJobClicked = (jobID: string) => {
     if (!jobsClicked.has(jobID)) {
       jobsClicked.add(jobID);
+      appliedHere = true;
       updateJobsViewed(0, 1);
     }
   };
@@ -42,6 +46,7 @@
         {jobListing}
         {jobListings}
         {file}
+        applied = {appliedHere}
         handleJobClicked={() => handleJobClicked(jobListing.link)}
       />
       <Spacer axis="y" size="16" />
@@ -54,6 +59,7 @@
         {jobListing}
         {jobListings}
         {file}
+        applied = {appliedHere}
         handleJobClicked={() => handleJobClicked(jobListing.link)}
       />
       <Spacer axis="y" size="16" />

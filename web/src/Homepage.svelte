@@ -2,10 +2,9 @@
   import { onMount, onDestroy } from "svelte";
   import JobForm from "$lib/job_form.svelte";
   import { backendURL, get, post } from "./utils";
-  import { goto, invalidateAll } from "$app/navigation";
+  import { invalidateAll } from "$app/navigation";
   import JobListings from "$lib/JobListings.svelte";
   import type { JobListing } from "$lib/types";
-  import HamburgerIcon from "$lib/icons/hamburger_icon.svelte";
 
   const { sessionID, defaultJobListings } = $props();
 
@@ -17,6 +16,7 @@
   let employmentType: string[] = $state([]);
   let file: Blob | string = $state("");
   let isMoreJobs = $state(true);
+  let applied = $state(false);
 
   let menu = $state(false);
 
@@ -121,15 +121,6 @@
       window.removeEventListener("resize", handleResize);
     });
   });
-
-  const hamburger = () => {
-    menu = !menu;
-  };
-
-  const logout = async () => {
-    await get("/logout_user");
-    invalidateAll();
-  };
 </script>
 
 <svelte:head>
@@ -137,36 +128,16 @@
 </svelte:head>
 <div class="flex justify-center pt-48px px-16px">
   <div class="flex gap-24px items-start max-[600px]:flex-col">
-    <div class="flex flex-col gap-24px">
-      <div class="flex justify-between items-center gap-[12px] max-w-[400px]">
-        <button onclick={hamburger} class="max-[600px]:flex hidden">
-          <HamburgerIcon/>
-        </button>
-        {#if menu}
-          <div class="flex gap-12px justify-center items-center max-[600px]:flex">
-            <button 
-              type="button"
-              class="bg-black text-white rounded-4px px-12px py-4px h-full w-[150px]"
-              onclick={logout}>
-              Sign Out
-            </button>
-            <div 
-              class="[border:1px_solid_black] rounded-4px px-12px py-4px text-center h-full w-[150px]"
-              >
-              Profile
-            </div>
-          </div>
-        {/if}
-      </div>
-        <JobForm
-          {getJobListings}
-          {setDegreeRequirements}
-          {setLocations}
-          {setEmploymentType}
-          {setFile}
-          {toggleIncludeRemoteJobs}
-          {toggleIncludeUSCitizenJobsOnly}
-        />
+    <div class="flex flex-col max-[600px]:gap-2px gap-20px">
+      <JobForm
+        {getJobListings}
+        {setDegreeRequirements}
+        {setLocations}
+        {setEmploymentType}
+        {setFile}
+        {toggleIncludeRemoteJobs}
+        {toggleIncludeUSCitizenJobsOnly}
+      />
     </div>
     <JobListings
       {getJobListings}
@@ -175,6 +146,7 @@
       {defaultJobListings}
       {file}
       {isMoreJobs}
+      {applied}
     />
   </div>
 </div>

@@ -15,11 +15,13 @@
     jobListing,
     jobListings,
     file,
+    applied,
   }: {
     handleJobClicked: () => void;
     jobListing: JobListing;
     jobListings: JobListing[];
     file: File | null;
+    applied: boolean;
   } = $props();
 
   const appliedToDialog = createDialog();
@@ -105,8 +107,11 @@
           handleJobClicked;
           appliedToDialog.open();
         }}
-      >
-        Apply
+      > {#if applied}
+          View Application
+        {:else}
+          Apply
+        {/if}
       </a>
     </div>
     <JobDialog
@@ -118,7 +123,9 @@
       {link}
       {formattedTime}
       {file}
+      {applied}
     />
+    {#if !applied}
     <AppliedToDialog
       dialog={appliedToDialog}
       {remote}
@@ -127,5 +134,6 @@
       {job_location}
       {job_title}
     />
+    {/if}
   </div>
 </div>

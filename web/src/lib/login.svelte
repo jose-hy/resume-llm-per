@@ -1,14 +1,18 @@
 <script lang="ts">
-  import { invalidateAll } from "$app/navigation";
-  import { post } from "../utils.js";
+  import { goto, invalidateAll } from "$app/navigation";
   import { formFunc } from "./loginForm.svelte.js";
+  import { supabase } from "./supabaseClient.js";
   import * as v from "valibot";
   import Spacer from "./spacer.svelte";
+  //import { ActionData, SubmitFunction } from './$types.js';
+
+  const { sessionID } = $props();
 
   export const form = formFunc({
-    email: v.pipe(v.string(), v.email("Invalid email")),
+    email: v.pipe(v.string(), v.nonEmpty("Email is required"),
+    v.email("Invalid email")),
     password: v.pipe(
-      v.string(),
+      v.string(), v.nonEmpty("Password is required"),
       v.minLength(6, "Password must be at least 6 characters long"),
     ),
   });
@@ -16,29 +20,57 @@
   let email = $state("");
   let status = $state("sign in");
   let password = $state("");
+  let confirmPassword = $state("");
   let isLoading = $state(false);
+  let errorMsg = $state("");
+  // Stops button click when email/password is empty
+  let isEmpty = $derived(email === "" || password === "");
 
   const register = async () => {
-    if (form.validate({ email, password })) {
-      isLoading = true;
-      try {
-        await post("/register", { username: email, password });
-
-        invalidateAll();
-      } catch (err) {
-        isLoading = false;
+    errorMsg = "";
+      if (form.validate({ email, password }) && confirmPassword === password) {
+        isLoading = true;
+        try {
+          const { data, error } = await supabase.auth.signUp({ email: email, password: password});
+          //console.log("Supabase signUp response:", { data, error });
+        } catch (err) {
+          console.log(err);
+          isLoading = false;
+        }
       }
-    }
+      await invalidateAll();
+      isLoading = false;
   };
 
   const login = async () => {
     isLoading = true;
-    try {
-      await post("/login", { username: email, password });
-      invalidateAll();
-    } catch (err) {
-      console.log(err);
+    errorMsg = "";
+    if (isEmpty) {
       isLoading = false;
+      return;
+    }
+    try {
+      const { data: signIn, error: signErr} = await supabase.auth.signInWithPassword({ email: email, password: password });
+      //console.log("Supabase signIn response:", signIn);
+      if (signErr) {
+        errorMsg = "Incorrect username or password.";
+        throw signErr;
+      }
+      // Send analytics event for daily active user
+      const statusError = await supabase.from("analytics").insert({
+        user_id: signIn.user?.id || "",
+        type: "daily_active_user",
+        data: {
+          count: 1,
+          session_id: sessionID,
+        }
+      })
+      goto("/registration");
+    } catch (err) {
+      isLoading = false;
+      errorMsg = "Incorrect username or password.";
+      console.log(err);
+      await invalidateAll();
     }
   };
 </script>
@@ -69,8 +101,23 @@
         type="password"
       />
     </div>
-    <Spacer axis="y" size={24} />
     <p>{form.errors.password}</p>
+    <Spacer axis="y" size={20} />
+    {#if status === "sign up" }
+      <div class="flex flex-col gap-4px w-full">
+      <label class="font-600 text-15px" for="confirmPassword">Confirm Password</label>
+      <input
+        class="[border:1px_solid_#DADADA] rounded-4px px-8px py-[6px]"
+        bind:value={confirmPassword}
+        id="confirmPassword"
+        type="password"
+      />
+    </div>
+    {/if}
+    {#if errorMsg}
+      <div class="text-red-600 mb-2">{errorMsg}</div>
+    {/if}
+    <Spacer axis="y" size={20} />
     <button
       class="bg-black text-white rounded-8px px-12px py-8px w-full mx-auto
       flex items-center gap-4 justify-center"

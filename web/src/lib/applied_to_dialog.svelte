@@ -1,19 +1,28 @@
 <script lang="ts">
   import Transition from "svelte-transition";
   import Spacer from "./spacer.svelte";
-  import { post } from "../utils";
+  import { supabase } from "./supabaseClient.js";
 
-  const { job_title, dialog, job_id, remote, link, job_location } = $props();
+  const { userID, job_id, title, company, location, description, apply_link, is_remote, dialog } = $props();
 
-  const handleAppliedToJob = () => {
+  const handleAppliedToJob = async () => {
     dialog.close();
-    post("/analytics/appliedTo", {
-      job_title,
-      job_id,
-      location: job_location,
-      url: link.includes("?") ? link.split("?")[0] : link,
-      remote,
-    });
+    const { data, error } = await supabase.from("applied_to").upsert(
+      {
+        user_id: userID, 
+        job_id: job_id, 
+        title: title, 
+        company: company,
+        location: location, 
+        description: description,
+        apply_link: apply_link,
+        created_at: new Date().toISOString(),
+        is_remote: is_remote,
+        applied_to_count: 1,
+      });
+    if (error) {
+      console.error("Error applying to job:", error);
+    }
   };
 </script>
 
@@ -50,13 +59,13 @@
               bg-white p-6 text-left align-middle shadow-xl transition-all"
             use:dialog.modal
           >
-            <p class="text-[18px] font-500">
+            <p class="text-[18px] font-500 align-middle text-center">
               Did you apply to <span class="font-700 text-[18px]">
-                {job_title}
+                {title}
               </span>?
             </p>
             <Spacer size={16} axis="y" />
-            <div class="flex gap-2">
+            <div class="flex gap-2 align-middle justify-center">
               <button
                 onclick={handleAppliedToJob}
                 class="bg-black text-white rounded-4px px-12px py-4px h-full min-w-[72px]"

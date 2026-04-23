@@ -7,11 +7,14 @@
   const {
     data,
     setData,
-  }: { data: string[]; setData: (data: string[]) => void } = $props();
+    selected,
+    setSelected,
+    editing = false,
+  }: { data: string[]; setData: (data: string[]) => void; selected?: string[]; setSelected?: (selected: string[]) => void; editing?: boolean } = $props();
 
   const combobox = createCombobox({
     label: "",
-    selected: [],
+    selected: selected ?? [],
   });
 
   const filtered = $derived(
@@ -23,8 +26,27 @@
     })
   );
 
+  function onSelect() {
+    let lastAlert = 0;
+    try {
+      const dateNow = Date.now();
+      if ($combobox.selected.length > 3) {
+        if (dateNow - lastAlert > 5000) {
+          alert("You can only select up to 3 job titles.");
+          lastAlert = dateNow;
+        }
+        //setSelected?($combobox.selected.slice(0, 3));
+        return;
+      }
+      setSelected?.($combobox.selected);
+    } catch (e) {
+      console.error("setSelected not provided", e);
+    }
+  }
+
   function onChange(e: Event) {
     setData((e as CustomEvent).detail.selected);
+    try {onSelect();} catch (e) {};
   }
 </script>
 
@@ -37,6 +59,7 @@
         class="focus:shadow-outline-teal relative w-full cursor-default rounded-md [border:1px_solid_#DADADA] bg-white py-2 pl-2 pr-10 text-left text-sm transition duration-150 ease-in-out focus:border-teal-300 focus:outline-none sm:leading-5"
       >
         <div class="flex flex-wrap gap-2">
+          {#if !editing}
           {#each $combobox.selected as selected (selected)}
             <span
               class="flex items-center gap-1 rounded bg-blue-50 px-2 py-0.5"
@@ -45,6 +68,7 @@
               <div use:combobox.deselect={selected}><CloseIcon /></div>
             </span>
           {/each}
+          {/if}
           <input
             use:combobox.input
             onchange={onChange}
@@ -69,6 +93,7 @@
       <ul
         use:combobox.items
         class="z-10 absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-sm shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+        class:absolute={!editing}
       >
         {#each filtered as value}
           {@const active = $combobox.active === value}
@@ -102,5 +127,17 @@
         {/each}
       </ul>
     </Transition>
+    {#if editing}
+    <div class="flex mt-8px gap-12px flex-row flex-wrap">
+      {#each $combobox.selected as selected (selected)}
+        <span
+          class="rounded-6px [border:2px_solid_#000000] resize-none p-4px flex items-center"
+        >
+          <span>{selected}</span>
+          <div use:combobox.deselect={selected}><CloseIcon /></div>
+        </span>
+      {/each}
+      </div>
+    {/if}
   </div>
 </div>

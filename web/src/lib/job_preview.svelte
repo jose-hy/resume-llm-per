@@ -14,58 +14,40 @@
     handleJobClicked,
     jobListing,
     jobListings,
-    file,
     applied,
+    userID,
+    sessionID,
   }: {
     handleJobClicked: () => void;
     jobListing: JobListing;
     jobListings: JobListing[];
-    file: File | null;
     applied: boolean;
+    userID: string;
+    sessionID: string;
   } = $props();
 
   const appliedToDialog = createDialog();
 
-  const generateScoreString = (score: number) => {
-    let str = "";
-
-    if (score <= 0.2) {
-      str = "Minimal Match";
-    } else if (score <= 0.4) {
-      str = "Low Match";
-    } else if (score <= 0.6) {
-      str = "Moderate Match";
-    } else if (score <= 0.8) {
-      str = "Good Match";
-    } else {
-      str = "Strong Match";
-    }
-
-    return `${str} (${(score * 100).toFixed(0).toString()}%)`;
-  };
-
   const {
-    job_post_date,
-    link,
-    description,
-    company,
-    job_location,
-    job_title,
-    score,
+    id,
     job_id,
-    remote,
+    title,
+    company,
+    location,
+    description,
+    apply_link,
+    posted_at,
+    embedding,
+    similarity,
+    is_remote,
+    is_active,
+    expires_at,
   } = jobListing;
 
-  const [city, state] = job_location.split(",").map((s) => s.trim());
-  const abbrState = { ...stateAbbreviations, "District of Columbia": "DC" }[
-    state
-  ];
-
+  const [city, state] = location.split(",").map((s) => s.trim());
+  const abbrState = stateAbbreviations[state];
   let descriptionPreview = description.slice(0, 200);
-
-  const formattedTime = dayjs(job_post_date).fromNow();
-
-  const scoreString = generateScoreString(score);
+  const formattedTime = dayjs(posted_at).fromNow();
 </script>
 
 <div
@@ -74,7 +56,7 @@
 >
   <div class="flex justify-between gap-[20px]">
     <div>
-      <p class="font-700 text-20px">{job_title}</p>
+      <p class="font-700 text-20px">{title}</p>
       <p class="14px font-500">
         {company}
       </p>
@@ -87,7 +69,7 @@
         class="bg-[#ECE5AC] max-w-min whitespace-nowrap
         h-full px-[6px] py-4px rounded-4px text-14px"
       >
-        {scoreString}
+        {similarity ? `${(similarity * 100).toFixed(2)}% Match` : "New"}
       </p>
     {/if}
   </div>
@@ -100,7 +82,7 @@
     <div>
       <a
         class="bg-black text-white rounded-4px px-12px py-4px h-full"
-        href={link}
+        href={apply_link}
         target="_blank"
         rel="noopener noreferrer"
         onclick={() => {
@@ -117,22 +99,26 @@
     <JobDialog
       {description}
       {company}
-      {job_title}
+      {title}
       {city}
       {abbrState}
-      {link}
+      {apply_link}
       {formattedTime}
-      {file}
+      {userID}
+      {sessionID}
       {applied}
     />
     {#if !applied}
     <AppliedToDialog
+      {userID}
+      job_id={id}
+      {title}
+      {company}
+      {location}
+      {description}
+      {apply_link}
+      {is_remote}
       dialog={appliedToDialog}
-      {remote}
-      {link}
-      {job_id}
-      {job_location}
-      {job_title}
     />
     {/if}
   </div>

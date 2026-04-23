@@ -27,7 +27,17 @@
   );
 
   function onSelect() {
+    let lastAlert = 0;
     try {
+      const dateNow = Date.now();
+      if ($combobox.selected.length > 3) {
+        if (dateNow - lastAlert > 5000) {
+          alert("You can only select up to 3 job titles.");
+          lastAlert = dateNow;
+        }
+        //setSelected?($combobox.selected.slice(0, 3));
+        return;
+      }
       setSelected?.($combobox.selected);
     } catch (e) {
       console.error("setSelected not provided", e);

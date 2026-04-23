@@ -1,9 +1,7 @@
 <script lang="ts">
   import JobPreview from "$lib/job_preview.svelte";
   import Spacer from "$lib/spacer.svelte";
-  import { put } from "../utils";
-  import type { JobListing } from "./types";
-
+  import type { JobListing } from "$lib/types";
   let isLoading = $state(false);
 
   const {
@@ -11,30 +9,18 @@
     defaultJobListings,
     jobListings,
     getJobListings,
-    file,
     isMoreJobs,
     applied,
+    userID,
   } = $props();
 
   let appliedHere = $state(applied);
   let jobsClicked = $state(new Set<string>());
 
-  const updateJobsViewed = async (
-    jobsCountIncrease: number,
-    jobsViewedIncrease: number,
-  ) => {
-    await put("/analytics/updateJobsViewed", {
-      jobs_count: jobsCountIncrease,
-      jobs_viewed: jobsViewedIncrease,
-      session_id: sessionID,
-    });
-  };
-
   const handleJobClicked = (jobID: string) => {
     if (!jobsClicked.has(jobID)) {
       jobsClicked.add(jobID);
       appliedHere = true;
-      updateJobsViewed(0, 1);
     }
   };
 </script>
@@ -45,33 +31,41 @@
       <JobPreview
         {jobListing}
         {jobListings}
-        {file}
+        {userID}
+        {sessionID}
         applied = {appliedHere}
         handleJobClicked={() => handleJobClicked(jobListing.link)}
       />
       <Spacer axis="y" size="16" />
     {/each}
   {:else if jobListings}
+    {#if applied}
+    <span class="max-w-[650px] w-[45vw] text-center mx-auto">
+      <button class="bg-black text-white rounded-4px px-12px py-4px whitespace-nowrap mx-auto mt-16px">
+        <a href="/">Explore jobs</a>
+      </button>
+    </span>
+    {:else}
     <p class="max-w-[650px] w-[45vw] text-center">No results found</p>
+    {/if}
   {:else}
     {#each defaultJobListings as jobListing}
       <JobPreview
         {jobListing}
         {jobListings}
-        {file}
+        {userID}
+        {sessionID}
         applied = {appliedHere}
         handleJobClicked={() => handleJobClicked(jobListing.link)}
       />
       <Spacer axis="y" size="16" />
     {/each}
   {/if}
-  {#if jobListings && jobListings.length > 0 && isMoreJobs}
+  {#if isMoreJobs}
     <button
       class="bg-black text-white rounded-4px px-12px py-4px
       max-w-min whitespace-nowrap mx-auto flex gap-12px items-center"
       onclick={async () => {
-        updateJobsViewed(10, 0);
-
         isLoading = true;
         await getJobListings(false);
         isLoading = false;

@@ -1,9 +1,12 @@
 <script lang="ts">
-  import { invalidateAll } from "$app/navigation";
-  import { post } from "../utils.js";
+  import { goto, invalidateAll } from "$app/navigation";
   import { formFunc } from "./loginForm.svelte.js";
+  import { supabase } from "./supabaseClient.js";
   import * as v from "valibot";
   import Spacer from "./spacer.svelte";
+  //import { ActionData, SubmitFunction } from './$types.js';
+
+  const { sessionID } = $props();
 
   export const form = formFunc({
     email: v.pipe(v.string(), v.nonEmpty("Email is required"),
@@ -24,16 +27,19 @@
   let isEmpty = $derived(email === "" || password === "");
 
   const register = async () => {
-    if (form.validate({ email, password })) {
-      isLoading = true;
-      try {
-        await post("/register", { username: email, password });
-        invalidateAll();
-      } catch (err) {
-        console.log(err);
-        isLoading = false;
+    errorMsg = "";
+      if (form.validate({ email, password }) && confirmPassword === password) {
+        isLoading = true;
+        try {
+          const { data, error } = await supabase.auth.signUp({ email: email, password: password});
+          //console.log("Supabase signUp response:", { data, error });
+        } catch (err) {
+          console.log(err);
+          isLoading = false;
+        }
       }
-    }
+      await invalidateAll();
+      isLoading = false;
   };
 
   const login = async () => {
@@ -44,20 +50,27 @@
       return;
     }
     try {
-      const res = await post("/login", { username: email, password });
-      if (!res.ok) {
-        const data = await res.json();
-        errorMsg = data.error || "Login failed";
-        isLoading = false;
-        return;
+      const { data: signIn, error: signErr} = await supabase.auth.signInWithPassword({ email: email, password: password });
+      //console.log("Supabase signIn response:", signIn);
+      if (signErr) {
+        errorMsg = "Incorrect username or password.";
+        throw signErr;
       }
-      console.log("Logged in");
-      invalidateAll();
+      // Send analytics event for daily active user
+      const statusError = await supabase.from("analytics").insert({
+        user_id: signIn.user?.id || "",
+        type: "daily_active_user",
+        data: {
+          count: 1,
+          session_id: sessionID,
+        }
+      })
+      goto("/registration");
     } catch (err) {
       isLoading = false;
       errorMsg = "Incorrect username or password.";
       console.log(err);
-      invalidateAll();
+      await invalidateAll();
     }
   };
 </script>
@@ -97,7 +110,7 @@
         class="[border:1px_solid_#DADADA] rounded-4px px-8px py-[6px]"
         bind:value={confirmPassword}
         id="confirmPassword"
-        type="confirmPassword"
+        type="password"
       />
     </div>
     {/if}

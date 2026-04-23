@@ -1,28 +1,26 @@
 import type { JobListing } from "$lib/types";
-import { backendURL, get } from "../../utils";
 import type { PageServerLoad } from "./$types";
+import { redirect } from '@sveltejs/kit';
+import { supabase } from '$lib/supabaseClient'
 
-export const load: PageServerLoad = async ({ request }) => {
-  const res = await get("", {
-    headers: {
-      cookie: request.headers.get("cookie") || "",
-    },
-  });
+export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) => {
+  const { session } = await safeGetSession()
+  if (session) {
+    redirect(303, "/profile");
+  }
 
+  const { data, error } = await supabase.from("jobs").select('*');
+  if (error) console.error('Connection failed:', error);
+  
   let defaultJobListings: JobListing[] = [];
-
-  if (res.status === 200) {
-    try {
-      const res = await fetch(backendURL("/latest_jobs"));
-      const data = await res.json();
-      defaultJobListings = data;
-    } catch (err) {
-      console.log(err);
-    }
+  
+  try {
+    defaultJobListings = data as JobListing[];
+  } catch (err) {
+    console.log(err);
   }
 
   return {
-    isAuthed: res.status === 200,
     sessionID: crypto.randomUUID(),
     defaultJobListings,
   };

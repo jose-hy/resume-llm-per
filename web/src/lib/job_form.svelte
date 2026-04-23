@@ -8,7 +8,6 @@
     setDegreeRequirements,
     setLocations,
     setEmploymentType,
-    setFile,
     toggleIncludeRemoteJobs,
     toggleIncludeUSCitizenJobsOnly,
   } = $props();
@@ -29,13 +28,6 @@
     in the IT field.
   </p>
   <Spacer axis="y" size="24" />
-  <p class="font-600">Upload resume</p>
-  <input
-    class="mt-1 [border:1px_solid_#DADADA] rounded-md px-12px py-2 w-full"
-    type="file"
-    onchange={(e) => setFile((e.target as HTMLInputElement).files?.[0] ?? "")}
-  />
-  <Spacer axis="y" size="24" />
   <p class="font-600">Locations</p>
   <Search
     data={["All", ...Object.keys(stateAbbreviations)]}
@@ -54,7 +46,7 @@
       type="checkbox"
       id="remote-checkbox"
     />
-    <label for="remote-checkbox">Include remote jobs</label>
+    <label for="remote-checkbox">Include remote jobs only</label>
   </div>
   <Spacer axis="y" size="8" />
   <div class="flex gap-8px items-center">

@@ -1,74 +1,37 @@
 <script lang="ts">
-  import JobListings from "./JobListings.svelte";
   import type { JobListing } from "$lib/types";
   import { onMount, onDestroy } from "svelte";
-  import { backendURL, get, post } from "../utils";
+  import Spacer from "./spacer.svelte";
+  import { supabase } from "$lib/supabaseClient.js";
+  import JobListings from "$lib/JobListings.svelte";
 
-  const { sessionID, defaultJobListings } = $props();
+  const { sessionID, userID, defaultJobListings } = $props();
 
-  let jobListings: JobListing[] | null = $state(null);
-  let includeRemoteJobs = $state(false);
-  let includeUSCitizenJobsOnly = $state(false);
-  let locations: string[] = $state([]);
-  let degreeRequirements: string[] = $state([]);
-  let employmentType: string[] = $state([]);
-  let file: Blob | string = $state("");
+  let jobListings: JobListing[] = $state([]);
+  let allJobs: JobListing[] = $state([]);
+  //let includeRemoteJobs = $state(false);
+  //let includeUSCitizenJobsOnly = $state(false);
+  //let locations: string[] = $state([]);
+  //let degreeRequirements: string[] = $state([]);
+  //let employmentType: string[] = $state([]);
+  //let file: Blob | string = $state("");
   let isMoreJobs = $state(true);
   let applied = $state(true);
-
   let menu = $state(false);
 
+  onMount(async () => {
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial value
 
-  const getJobListings = async (isNewSearch: boolean) => {
+    onDestroy(() => {
+      window.removeEventListener("resize", handleResize);
+    });
+
     try {
-      const url = new URL(backendURL("/search_jobs"));
-      for (let i = 0; i < locations.length; i++) {
-        url.searchParams.append("location_state", locations[i]);
-      }
-      for (let i = 0; i < degreeRequirements.length; i++) {
-        url.searchParams.append(
-          "degree",
-          degreeRequirements[i].split(" ").join("_").toLowerCase(),
-        );
-      }
-      for (let i = 0; i < employmentType.length; i++) {
-        url.searchParams.append("employment_type", employmentType[i]);
-      }
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("rerank", "true");
-      formData.append("result_count", "10");
-      formData.append("offset", String(jobListings?.length ?? 0));
-      formData.append("limit", "10");
-      formData.append("remote", String(includeRemoteJobs));
-      formData.append(
-        "exclude_citizen_only",
-        String(!includeUSCitizenJobsOnly),
-      );
-
-      const res = await fetch(url, {
-        headers: {
-          Accept: "application/json",
-        },
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (isNewSearch) {
-        if (
-          data?.message ===
-          "No matching jobs found for your resume and filters."
-        ) {
-          jobListings = [];
-        } else {
-          jobListings = data;
-          if (data.length < 10) {
-            isMoreJobs = false;
-          }
-        }
-      } else if (jobListings) {
-        jobListings = [...jobListings, ...data];
+      const { data, error } = await supabase.from("applied_to").select("*").eq("user_id", userID);
+      if (data) {
+        allJobs = data as JobListing[];
+        jobListings = data.slice(0, 10) as JobListing[];
         if (data.length < 10) {
           isMoreJobs = false;
         }
@@ -76,24 +39,26 @@
     } catch (err) {
       console.log(err);
     }
-  };
 
-  onMount(async () => {
-    await Promise.all([
-      post("/analytics/initializeAnalytics", {
-        type: "jobs_viewed",
-        data: JSON.stringify({
-          session_id: sessionID,
-          clicked_on: 0,
-          viewed: 10,
-        }),
-      }),
-      post("/analytics/initializeAnalytics", {
-        type: "dau", // Daily Active Users
-        data: JSON.stringify({ count: 1, session_id: sessionID }),
-      }),
-    ]);
   });
+
+  const getJobListings = async (isNewSearch: boolean) => {
+    if (isNewSearch) {
+      // This JobListings will never do a new search
+    } else {
+      if (allJobs.length > 0) {
+        const currentLength = jobListings.length;
+        const nextJobs = allJobs.slice(currentLength, currentLength + 10);
+        if (nextJobs.length === 0) {
+          isMoreJobs = false; 
+        } else {
+          jobListings = [...jobListings, ...nextJobs];
+        }
+      } else {
+        isMoreJobs = false;
+      }
+    }
+  };
 
   function handleResize() {
     if (window.innerWidth < 600) {
@@ -102,15 +67,6 @@
       menu = true;
     }
   }
-
-  onMount(() => {
-    window.addEventListener("resize", handleResize);
-    handleResize(); // Set initial value
-
-    onDestroy(() => {
-      window.removeEventListener("resize", handleResize);
-    });
-  });
 </script>
 
 <div class="w-2/3">
@@ -120,8 +76,8 @@
       {getJobListings}
       {jobListings}
       {sessionID}
+      {userID}
       {defaultJobListings}
-      {file}
       {isMoreJobs}
       {applied}
     />

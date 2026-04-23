@@ -1,17 +1,25 @@
 <script lang="ts">
   import { get, post } from "../utils";
   import { goto, invalidateAll } from "$app/navigation";
+  import { supabase } from "./supabaseClient.js";
   import Avatar from "./profile_pic.svelte";
 
   const {
-    loggedIn
+    loggedIn,
+    profileName = "User"
   } = $props();
 
   const logout = async () => {
-    if (window.location.pathname !== "/") {
+    {/*if (window.location.pathname !== "/") {
       await goto("/");
     }
-    await get("/logout_user");
+    await get("/logout_user");*/}
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Error signing out:", error);
+    } 
+    //console.log("Successfully signed out");
+    goto("/");
     invalidateAll();
   };
 
@@ -19,6 +27,10 @@
   const handleProfileClick = () => {
     clicked = !clicked;
   };
+  /**
+   * <li class="text-white hover:text-black hover:bg-white px-8px py-4px hover:rounded-[4px]"> 
+      <button type="button" onclick={() => goto("/registration")}>Register Page</button> </li>
+   */
 
 </script>
 
@@ -40,12 +52,10 @@
         <ul class="flex gap-12px flex-row-reverse justify-center items-center">
           <li>
             <button type="button" onclick={handleProfileClick} class="mt-[6px]">
-              <Avatar round={false} userFullName="First Last" width={32} />
+              <Avatar round={false} userFullName={profileName} width={32} />
             </button>
           </li>
           {#if clicked}
-          <li class="text-white hover:text-black hover:bg-white px-8px py-4px hover:rounded-[4px]"> 
-            <button type="button" onclick={() => goto("/registration")}>Register Page</button> </li>
           <li class="text-white hover:text-black hover:bg-white px-8px py-4px hover:rounded-[4px]">
             <button type="button" onclick={() => goto("/profile")}>Profile</button> </li>
           <li class="text-white hover:text-black hover:bg-white px-8px py-4px hover:rounded-[4px]">

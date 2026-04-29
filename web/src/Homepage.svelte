@@ -43,6 +43,7 @@
     userID = userProfile.id || "";    
     userVector = userProfile.embedding;
 
+    // Call jobs based on resume embedding, max 50 with similarity being at least 40%
     try {
       const { data: recs, error } = await supabase.rpc('match_jobs', {
         query_embedding: userVector,
@@ -60,6 +61,7 @@
           allVectorJobs = recs as JobListing[];
         }
         vectorJobs = allVectorJobs;
+        // Only show 10 jobs and load more with button click
         jobListings = vectorJobs.slice(0, 10) as JobListing[];
         if (vectorJobs.length < 10) {
           isMoreJobs = false;

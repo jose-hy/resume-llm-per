@@ -36,6 +36,7 @@
     "dayjs": "^1.11.13",
     "marked": "^15.0.7",
     "svelte-headlessui": "github:de-data-lab/svelte-headlessui",
-    "svelte-transition": "^0.0.17"
+    "svelte-transition": "^0.0.17",
+    "wrangler": "^4.86.0"
   }
 }

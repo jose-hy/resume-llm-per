@@ -4,11 +4,11 @@
   "version": "0.0.1",
   "type": "module",
   "engines": {
-    "node": "18.18.0"
+    "node": ">=20 <21"
   },
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "svelte-kit sync && vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -36,6 +36,7 @@
     "dayjs": "^1.11.13",
     "marked": "^15.0.7",
     "svelte-headlessui": "github:de-data-lab/svelte-headlessui",
-    "svelte-transition": "^0.0.17"
+    "svelte-transition": "^0.0.17",
+    "wrangler": "^4.86.0"
   }
 }

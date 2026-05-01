@@ -64,7 +64,7 @@
           count: 1,
           session_id: sessionID,
         }
-      })
+      });
       goto("/registration");
     } catch (err) {
       isLoading = false;

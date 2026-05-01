@@ -1,7 +1,6 @@
 <script lang="ts">
   import Search from "$lib/multiselect.svelte";
   import AllJobRoles from "$lib/job_roles.json";
-  import { set } from "valibot";
   import { goto } from "$app/navigation";
   import { supabase } from "$lib/supabaseClient";
   import { onMount } from "svelte";

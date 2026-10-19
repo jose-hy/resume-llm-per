@@ -10,17 +10,12 @@
   } = $props();
 
   const logout = async () => {
-    {/*if (window.location.pathname !== "/") {
-      await goto("/");
+    try {
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      if (error) console.error("Error signing out:", error);
+    } finally {
+      await goto("/", { invalidateAll: true });
     }
-    await get("/logout_user");*/}
-    const { error } = await supabase.auth.signOut({ scope: 'local' });
-    if (error) {
-      console.error("Error signing out:", error);
-    } 
-    //console.log("Successfully signed out");
-    goto("/");
-    invalidateAll();
   };
 
   let clicked = $state(false);

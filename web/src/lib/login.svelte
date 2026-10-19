@@ -65,7 +65,6 @@
           session_id: sessionID,
         }
       });
-      goto("/registration");
     } catch (err) {
       isLoading = false;
       errorMsg = "Incorrect username or password.";

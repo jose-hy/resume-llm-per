@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
     redirect(303, "/profile");
   }
 
-  const { data, error } = await supabase.from("jobs").select('*');
+  const { data, error } = await supabase.from("jobs").select('*').limit(30).order('posted_at', {ascending: false});
   if (error) console.error('Connection failed:', error);
   
   let defaultJobListings: JobListing[] = [];

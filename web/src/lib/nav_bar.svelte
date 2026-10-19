@@ -9,6 +9,12 @@
     profileName = "User"
   } = $props();
 
+  const homeClick = async () => {
+    if (loggedIn) {
+      await goto("/");
+    };
+  }
+
   const logout = async () => {
     {/*if (window.location.pathname !== "/") {
       await goto("/");
@@ -19,7 +25,7 @@
       console.error("Error signing out:", error);
     } 
     //console.log("Successfully signed out");
-    goto("/");
+    await goto("/");
     invalidateAll();
   };
 
@@ -38,9 +44,8 @@
   <nav class="flex justify-between items-center w-full px-16px py-12px">
     <div class="text-center flex flex-col text-[24px]">
       <button type="button" onclick={() => {
-        if (loggedIn) {
-          goto("/");
-        }} }>
+        homeClick()} 
+      }>
         <h1 class="text-white font-extrabold m-0">Interview</h1>
         <h1 class="text-white font-extrabold m-0 -mt-4">Moves</h1>
       </button>

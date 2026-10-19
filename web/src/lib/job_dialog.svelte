@@ -24,7 +24,7 @@
 
   const handleLearn = async () => {
     dialog.open();
-    const statusError = await supabase.from("analytics").insert({
+    const statusError = await supabase.from("analytics").upsert({
       user_id: userID,
       type: "jobs_viewed",
       data: {

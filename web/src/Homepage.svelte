@@ -72,17 +72,22 @@
     }
   });
 
-  const getJobListings = async (isNewSearch: boolean) => {
+  const getJobListings = (isNewSearch: boolean) => {
     // Loads more jobs from load more button,
     // Or filters jobListings based on job form
     if (isNewSearch) {
       // Filter jobListings based on filters from job form
+      console.log("locations:", locations);
       vectorJobs = allVectorJobs.filter((job) => {
         const remoteCheck = includeRemoteJobs ? job.is_remote : true;
-        const locationCheck = locations.length > 0 && !locations.includes("All") ? locations.some(loc => job.location.toLowerCase().includes(loc.toLowerCase())) : true;
-        return (remoteCheck && locationCheck);
+        console.log("location: ", job.location);
+        console.log("is locations in this location: ", locations.some((loc) => job.location.toLowerCase().includes(loc.toLowerCase())));
+        const locationCheck = (locations.length > 0 && !locations.includes("All")) ? locations.some((loc) => job.location.toLowerCase().includes(loc.toLowerCase())) : true;
+        return remoteCheck && locationCheck;
       });
+      console.log("Vector filtered", vectorJobs);
       jobListings = vectorJobs.slice(0, 10);
+      jobListings = jobListings;
       if (vectorJobs.length < 10) {
         isMoreJobs = false;
       } else isMoreJobs = true;

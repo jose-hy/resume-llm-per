@@ -5,7 +5,7 @@
   import JobListings from "$lib/JobListings.svelte";
   import type { JobListing } from "$lib/types";
 
-  const { sessionID, defaultJobListings } = $props();
+  const { sessionID, defaultJobListings, profile } = $props();
 
   let jobListings: JobListing[] = $state([]);
   let vectorJobs: JobListing[] = $state([]);
@@ -17,8 +17,8 @@
   let includeUSCitizenJobsOnly = $state(false);
   let isMoreJobs = $state(true);
   let applied = $state(false);
-  let userVector: any;
-  let userID = $state("");
+  let userVector: any = $derived(profile.embedding);
+  let userID = $derived(profile.id || "");
 
   let menu = $state(false);
 
@@ -33,7 +33,7 @@
 
   onMount( async () => {
 
-    const { data: userProfile, error } = await supabase.from("profiles").select("*").single();
+    {/* const { data: userProfile, error } = await supabase.from("profiles").select("*").single();
     //console.log("Supabase profile fetch response:", userProfile);
     if (!userProfile) {
       // Reroute new user with no Profile to Registration page
@@ -41,7 +41,7 @@
       return;
     };
     userID = userProfile.id || "";    
-    userVector = userProfile.embedding;
+    userVector = userProfile.embedding; */}
 
     // Call jobs based on resume embedding, max 50 with similarity being at least 40%
     try {

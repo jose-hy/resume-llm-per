@@ -8,13 +8,12 @@
   import NavBar from "$lib/nav_bar.svelte";
 
   let { data } = $props();
-  //let userProfile = $state("");
   let profile: any = $state(null);
   let session = $state<AuthSession | null>(null);
   let loading = $state(true);
 
   const resolveUser = async (s: AuthSession | null) => {
-    // Skip if nothing changed (Supabase can re-fire SIGNED_IN on tab refocus)
+    // Skip if nothing changed
     if (s?.user.id && s.user.id === session?.user.id && profile) return;
 
     session = s;
@@ -30,11 +29,11 @@
 
     if (error) {
       console.error("Error fetching profile:", error);
-      loading = false;          // shows the error branch below, not a false redirect
+      loading = false;          // shows the error branch below
       return;
     }
     if (!p) {
-      // New user: keep the spinner up and go straight to registration
+      // Keep the loading state up and go straight to registration for new users
       await goto("/registration", { replaceState: true });
       return;
     }
@@ -47,35 +46,12 @@
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
       if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
-        // Defer: awaiting Supabase calls inside this callback can deadlock
         setTimeout(() => resolveUser(s), 0);
       }
     });
     return () => subscription.unsubscribe();
   });
 </script>
-<!--
-  onMount(async () => {
-    supabase.auth.getSession().then(({data}) => {
-      session = data.session;
-      loading = false;
-    });
-
-    supabase.auth.onAuthStateChange((_event, _session) => {
-      session = _session;
-    });
-
-    try {
-      const { data: profile, error } = await supabase.from("profiles").select("*").single();
-    if (profile) {
-      userProfile = profile.full_name || "";
-    }
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-    };
-    
-  });
-</script> -->
 
 <div>
   {#if loading}

@@ -32,17 +32,6 @@
   
 
   onMount( async () => {
-
-    {/* const { data: userProfile, error } = await supabase.from("profiles").select("*").single();
-    //console.log("Supabase profile fetch response:", userProfile);
-    if (!userProfile) {
-      // Reroute new user with no Profile to Registration page
-      window.location.href = "/registration";
-      return;
-    };
-    userID = userProfile.id || "";    
-    userVector = userProfile.embedding; */}
-
     // Call jobs based on resume embedding, max 50 with similarity being at least 40%
     try {
       const { data: recs, error } = await supabase.rpc('match_jobs', {
@@ -50,7 +39,6 @@
         match_threshold: 0.40,
         match_count: 50,
       });
-      //console.log("Vector Jobs Embedding: ", recs);
       if (recs) {
         // Call applied_to and remove any jobs that user already applied to from recs
         const { data, error } = await supabase.from("applied_to").select("*").eq("user_id", userID);
